@@ -9,3 +9,18 @@ ehthumbs.db
 Thumbs.db
 
 .svn
+
+WorldWind/resources/milstd2525-png
+WorldWindAndroidSDK/.idea/workspace.xml
+WorldWindAndroidSDK/WorldWindAndroid/classes
+bin
+doc
+worldwind-android.jar
+WorldWindAndroidSDK/WorldWindAndroidExamples/gen
+bin
+local.properties
+*.apk
+WorldWindAndroidSDK/WorldWindAndroidExamples/libs/worldwind-android.jar
+WorldWindIOS/TAIGA/TAIGADistributionSite.dcproj/*.wdgtuser
+WorldWindIOS/WorldWindExamples/WorldWindExamplesSite.dcproj/*.wdgtuser
+

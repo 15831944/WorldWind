@@ -366,7 +366,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                     return;
 
                 ElevationTile tile = this.elevationModel.createTile(this.tileKey);
-                final URL url = this.elevationModel.getDataFileStore().findFile(tile.getPath(), false);
+                final Object url = this.elevationModel.getDataFileStore().findFile(tile.getPath(), false);
                 if (url != null && !this.elevationModel.isFileExpired(tile, url,
                     this.elevationModel.getDataFileStore()))
                 {
@@ -379,7 +379,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                     else
                     {
                         // Assume that something is wrong with the file and delete it.
-                        this.elevationModel.getDataFileStore().removeFile(url);
+                    	if(url instanceof URL)
+                    		this.elevationModel.getDataFileStore().removeFile((URL)url);
                         this.elevationModel.levels.markResourceAbsent(tile);
                         String message = Logging.getMessage("generic.DeletedCorruptDataFile", url);
                         Logging.info(message);
@@ -423,13 +424,14 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
     }
 
-    protected boolean isFileExpired(Tile tile, java.net.URL fileURL, FileStore fileStore)
+    protected boolean isFileExpired(Tile tile, Object fileURL, FileStore fileStore)
     {
         if (!WWIO.isFileOutOfDate(fileURL, tile.getLevel().getExpiryTime()))
             return false;
 
         // The file has expired. Delete it.
-        fileStore.removeFile(fileURL);
+        if(fileURL instanceof URL)
+        	fileStore.removeFile((URL)fileURL);
         String message = Logging.getMessage("generic.DataFileExpired", fileURL);
         Logging.verbose(message);
         return true;
@@ -437,7 +439,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     // Reads a tile's elevations from the file cache and adds the tile to the memory cache.
 
-    protected boolean loadElevations(ElevationTile tile, java.net.URL url) throws IOException
+    protected boolean loadElevations(ElevationTile tile, Object url) throws IOException
     {
         short[] elevations = this.readElevations(url);
         if (elevations == null || elevations.length == 0)
@@ -472,7 +474,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     // Read elevations from the file cache. Don't be confused by the use of a URL here: it's used so that files can
     // be read using System.getResource(URL), which will draw the data from a jar file in the classpath.
 
-    protected short[] readElevations(URL url) throws IOException
+    protected short[] readElevations(Object url) throws IOException
     {
         try
         {

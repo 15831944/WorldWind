@@ -150,7 +150,7 @@ public class TiledImageLayerBulkDownloader extends BulkRetrievalThread
                 continue;
             }
 
-            URL url = this.fileStore.findFile(tile.getPath(), false);
+            Object url = this.fileStore.findFile(tile.getPath(), false);
             if (url != null)
             {
                 // tile has been retrieved and is local now, count it as retrieved.
@@ -393,7 +393,7 @@ public class TiledImageLayerBulkDownloader extends BulkRetrievalThread
         if (this.layer.getLevels().isResourceAbsent(tile))
             return true;  // tile is absent
 
-        URL url = this.fileStore.findFile(tile.getPath(), false);
+        Object url = this.fileStore.findFile(tile.getPath(), false);
 
         return url != null && !this.layer.isTextureFileExpired(tile, url, fileStore);
     }

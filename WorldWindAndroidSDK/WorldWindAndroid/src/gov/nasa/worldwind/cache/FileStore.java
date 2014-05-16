@@ -77,11 +77,11 @@ public interface FileStore
      * @param checkClassPath if true, the current classpath is first searched for the file, otherwise the classpath is
      *                       not searched.
      *
-     * @return a URL addressing the file if it is found.
+     * @return a URL addressing the file or a AssetFileDescriptor if it is found.
      *
      * @throws IllegalArgumentException if the specified path is null.
      */
-    java.net.URL findFile(String fileName, boolean checkClassPath);
+    Object findFile(String fileName, boolean checkClassPath);
 
     /**
      * Creates a new, empty file in the file store.

@@ -587,7 +587,7 @@ public class TiledImageLayer extends AbstractLayer implements Tile.TileFactory, 
      */
     protected void loadTile(GpuTextureTile tile)
     {
-        URL textureURL = this.getDataFileStore().findFile(tile.getPath(), false);
+        Object textureURL = this.getDataFileStore().findFile(tile.getPath(), false);
         if (textureURL != null)
         {
             this.loadTileFromCache(tile, textureURL);
@@ -604,7 +604,7 @@ public class TiledImageLayer extends AbstractLayer implements Tile.TileFactory, 
      * @param tile       tile to load.
      * @param textureURL local URL to the cached resource.
      */
-    protected void loadTileFromCache(GpuTextureTile tile, URL textureURL)
+    protected void loadTileFromCache(GpuTextureTile tile, Object textureURL)
     {
         GpuTextureData textureData;
 
@@ -630,13 +630,14 @@ public class TiledImageLayer extends AbstractLayer implements Tile.TileFactory, 
         else
         {
             // Assume that something is wrong with the file and delete it.
-            this.getDataFileStore().removeFile(textureURL);
+        	if(textureURL instanceof URL)
+        		this.getDataFileStore().removeFile((URL)textureURL);
             String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
             Logging.info(message);
         }
     }
 
-    protected GpuTextureData createTextureData(URL textureURL)
+    protected GpuTextureData createTextureData(Object textureURL)
     {
         return GpuTextureData.createTextureData(textureURL);
     }
@@ -1017,13 +1018,14 @@ public class TiledImageLayer extends AbstractLayer implements Tile.TileFactory, 
         return downloader.getEstimatedMissingDataSize();
     }
 
-    protected boolean isTextureFileExpired(GpuTextureTile tile, java.net.URL textureURL, FileStore fileStore)
-    {
+    protected boolean isTextureFileExpired(GpuTextureTile tile, Object textureURL, FileStore fileStore)
+    {   	
         if (!WWIO.isFileOutOfDate(textureURL, tile.getLevel().getExpiryTime()))
             return false;
 
         // The file has expired. Delete it.
-        fileStore.removeFile(textureURL);
+        if(textureURL instanceof URL)
+        	fileStore.removeFile((URL)textureURL);
         String message = Logging.getMessage("generic.DataFileExpired", textureURL);
         Logging.verbose(message);
         return true;

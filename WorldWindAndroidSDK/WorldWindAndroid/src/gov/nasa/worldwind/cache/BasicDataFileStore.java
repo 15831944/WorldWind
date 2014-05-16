@@ -388,7 +388,7 @@ public class BasicDataFileStore implements FileStore
      *
      * @throws IllegalArgumentException if <code>fileName</code> is null
      */
-    public URL findFile(String fileName, boolean checkClassPath)
+    public Object findFile(String fileName, boolean checkClassPath)
     {
         if (fileName == null)
         {

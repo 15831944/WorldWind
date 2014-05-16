@@ -16,6 +16,8 @@ import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import android.content.res.AssetFileDescriptor;
+
 /**
  * @author dcollins
  * @version $Id: WWIO.java 771 2012-09-14 19:30:10Z tgaskins $
@@ -488,6 +490,17 @@ public class WWIO
         {
             return openURLStream((URL) source);
         }
+        else if(source instanceof AssetFileDescriptor)
+        {
+        	try
+			{
+				return new DataInputStream(((AssetFileDescriptor)source).createInputStream());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+        }
         else if (source instanceof InputStream)
         {
             return (InputStream) source;
@@ -713,7 +726,7 @@ public class WWIO
      * @throws IllegalArgumentException if the URL is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readURLContentToBuffer(URL url) throws IOException
+    public static ByteBuffer readURLContentToBuffer(Object url) throws IOException
     {
         if (url == null)
         {
@@ -722,9 +735,37 @@ public class WWIO
             throw new IllegalArgumentException(message);
         }
 
-        return readURLContentToBuffer(url, false);
+        if(url instanceof URL) return readURLContentToBuffer((URL)url, false);
+        else if(url instanceof AssetFileDescriptor) return readAssetFileDescriptorToBuffer((AssetFileDescriptor)url, false);
+        else
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
     }
 
+    public static ByteBuffer readAssetFileDescriptorToBuffer(AssetFileDescriptor fd, boolean allocateDirect) throws IOException
+    {
+        if (fd == null)
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        InputStream is = null;
+        try
+        {
+            is = openStream(fd);
+            return readStreamToBuffer(is, allocateDirect);
+        }
+        finally
+        {
+            WWIO.closeStream(is, fd.toString());
+        }
+    }
+    
     /**
      * Reads all the bytes from the specified {@link URL}, returning the bytes as a {@link ByteBuffer} with the current
      * JVM byte order. This returns a direct ByteBuffer if allocateDirect is true, and returns a non-direct ByteBuffer
@@ -916,7 +957,7 @@ public class WWIO
         return charBuffer.toString();
     }
 
-    public static boolean isFileOutOfDate(URL url, long expiryTime)
+    public static boolean isFileOutOfDate(Object url, long expiryTime)
     {
         if (url == null)
         {
@@ -924,11 +965,13 @@ public class WWIO
             Logging.error(message);
             throw new IllegalArgumentException(message);
         }
+        
+        if(!(url instanceof URL)) return false;
 
         try
         {
             // Determine whether the file can be treated like a File, e.g., a jar entry.
-            URI uri = url.toURI();
+            URI uri = ((URL)url).toURI();
             if (uri.isOpaque())
                 return false; // TODO: Determine how to check the date of non-Files
 

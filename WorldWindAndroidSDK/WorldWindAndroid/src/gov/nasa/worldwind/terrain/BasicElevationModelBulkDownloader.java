@@ -151,7 +151,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
                 continue;
             }
 
-            URL url = this.fileStore.findFile(tile.getPath(), false);
+            Object url = this.fileStore.findFile(tile.getPath(), false);
             if (url != null)
             {
                 // tile has been retrieved and is local now, count it as retrieved.
@@ -586,8 +586,8 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
         if (this.elevationModel.getLevels().isResourceAbsent(tile))
             return true;  // tile is absent
 
-        URL url = this.fileStore.findFile(tile.getPath(), false);
-
+        Object url = this.fileStore.findFile(tile.getPath(), false);
+        
         return url != null && !this.elevationModel.isFileExpired(tile, url, this.fileStore);
     }
 }

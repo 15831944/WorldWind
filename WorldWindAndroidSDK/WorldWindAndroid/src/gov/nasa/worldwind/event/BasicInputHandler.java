@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.event;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -19,6 +20,7 @@ import gov.nasa.worldwind.globes.Globe;
  * @author ccrick
  * @version $Id: BasicInputHandler.java 852 2012-10-12 19:35:43Z dcollins $
  */
+@SuppressLint("DefaultLocale")
 public class BasicInputHandler extends WWObjectImpl implements InputHandler
 {
     // TODO: put this value in a configuration file
@@ -260,8 +262,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
 
         if (view.computePositionFromScreenPoint(globe, this.screenPoint, this.position))
         {
-            final String latText = this.position.latitude.toString();
-            final String lonText = this.position.longitude.toString();
+            final String latText = String.format( "%.6f", position.latitude.degrees);
+            final String lonText = String.format( "%.6f", position.longitude.degrees);
 
             ((Activity) context).runOnUiThread(new Runnable()
             {
@@ -277,7 +279,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
             {
                 public void run()
                 {
-                    updateLatLonText("off globe", "off globe");
+                    updateLatLonText(" off globe", " off globe");
                 }
             });
         }

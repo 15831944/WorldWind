@@ -1,1 +1,1 @@
-This repository is synchronised with the updates the official NASA WorldWind SVN. Only performance issues and bugfixes are targeted here.
+This repository is synchronised with NASA WorldWind SVN. Only performance issues and bugfixes are targeted here.

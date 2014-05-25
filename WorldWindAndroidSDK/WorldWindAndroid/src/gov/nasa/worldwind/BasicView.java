@@ -312,16 +312,28 @@ public class BasicView extends WWObjectImpl implements View
     }
 
     /** {@inheritDoc} */
-    public Vec4 getEyePoint()
-    {
-        return this.eyePoint;
-    }
-
-    /** {@inheritDoc} */
     public Position getEyePosition(Globe globe)
     {
         // TODO: Remove the globe parameter from this method.
         return this.eyePosition;
+    }
+    
+	@Override
+	public Position getEyePosition()
+	{
+		return this.eyePosition;
+	}
+
+	@Override
+	public void setEyePosition(Position value)
+	{
+		this.eyePosition.set(value);
+	}
+	
+    /** {@inheritDoc} */
+    public Vec4 getEyePoint()
+    {
+        return this.eyePoint;
     }
 
     public Position getLookAtPosition()
@@ -358,11 +370,13 @@ public class BasicView extends WWObjectImpl implements View
         this.range = distance;
     }
 
+	@Override
     public Angle getHeading()
     {
         return this.heading;
     }
 
+	@Override
     public void setHeading(Angle angle)
     {
         if (angle == null)
@@ -375,11 +389,13 @@ public class BasicView extends WWObjectImpl implements View
         this.heading.set(angle);
     }
 
+	@Override
     public Angle getTilt()
     {
         return this.tilt;
     }
 
+	@Override
     public void setTilt(Angle angle)
     {
         if (angle == null)
@@ -392,11 +408,13 @@ public class BasicView extends WWObjectImpl implements View
         this.tilt.set(angle);
     }
 
+	@Override
     public Angle getRoll()
     {
         return this.roll;
     }
 
+	@Override
     public void setRoll(Angle angle)
     {
         if (angle == null)
@@ -405,7 +423,7 @@ public class BasicView extends WWObjectImpl implements View
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
-
         this.roll.set(angle);
     }
+
 }

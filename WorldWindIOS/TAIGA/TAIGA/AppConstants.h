@@ -2,13 +2,13 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppConstants.h 1999 2014-05-14 23:55:07Z tgaskins $
+ @version $Id: AppConstants.h 2025 2014-05-23 00:00:09Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
 
-#define TAIGA_VERSION (@"0.0034")
-#define TAIGA_VERSION_DATE (@"5/9/14")
+#define TAIGA_VERSION (@"0.0035")
+#define TAIGA_VERSION_DATE (@"5/21/14")
 
 #define TAIGA_CURRENT_AIRCRAFT_POSITION (@"gov.nasa.worldwind.taiga.currentaircraftposition")
 #define TAIGA_DATA_FILE_ID (@"gov.nasa.worldwind.taiga.data.file.id")

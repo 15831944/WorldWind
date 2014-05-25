@@ -13,6 +13,33 @@ import gov.nasa.worldwind.util.Logging;
  */
 public class Angle
 {
+    /** Represents an angle of zero degrees */
+    public final static Angle ZERO = Angle.fromDegrees(0);
+
+    /** Represents a right angle of positive 90 degrees */
+    public final static Angle POS90 = Angle.fromDegrees(90);
+
+    /** Represents a right angle of negative 90 degrees */
+    public final static Angle NEG90 = Angle.fromDegrees(-90);
+
+    /** Represents an angle of positive 180 degrees */
+    public final static Angle POS180 = Angle.fromDegrees(180);
+
+    /** Represents an angle of negative 180 degrees */
+    public final static Angle NEG180 = Angle.fromDegrees(-180);
+
+    /** Represents an angle of positive 360 degrees */
+    public final static Angle POS360 = Angle.fromDegrees(360);
+
+    /** Represents an angle of negative 360 degrees */
+    public final static Angle NEG360 = Angle.fromDegrees(-360);
+
+    /** Represents an angle of 1 minute */
+    public final static Angle MINUTE = Angle.fromDegrees(1d / 60d);
+
+    /** Represents an angle of 1 second */
+    public final static Angle SECOND = Angle.fromDegrees(1d / 3600d);
+  
     protected static final double DEGREES_TO_RADIANS = Math.PI / 180d;
     protected static final double RADIANS_TO_DEGREES = 180d / Math.PI;
 
@@ -169,7 +196,7 @@ public class Angle
 
     /**
      * Divides this angle by <code>divisor</code>. This angle remains unchanged. The result is returned as a new angle.
-     * Behaviour is undefined if <code>divisor</code> equals zero.
+     * Behavior is undefined if <code>divisor</code> equals zero.
      *
      * @param divisor the number to be divided by.
      *
@@ -180,6 +207,19 @@ public class Angle
         return Angle.fromDegrees(this.degrees / divisor);
     }
 
+    /**
+     * Divides this angle by <code>divisor</code>. This angle remains unchanged. The result is returned as a new angle.
+     * Behavior is undefined if <code>divisor</code> equals zero.
+     *
+     * @param divisor the angle to be divided by.
+     *
+     * @return a new angle equivalent to this angle divided by <code>divisor</code>.
+     */
+    public Angle divide(Angle divisor)
+    {
+        return Angle.fromDegrees(this.degrees / divisor.degrees);
+    }
+    
     public Angle addDegrees(double degrees)
     {
         return Angle.fromDegrees(this.degrees + degrees);
@@ -369,6 +409,65 @@ public class Angle
         }
 
         return Angle.fromDegrees(0.5 * (lhs.degrees + rhs.degrees));
+    }
+
+    /**
+     * Linearly interpolates between two angles.
+     *
+     * @param amount the interpolant.
+     * @param value1 the first angle.
+     * @param value2 the second angle.
+     *
+     * @return a new angle between <code>value1</code> and <code>value2</code>.
+     */
+    public static Angle mix(double amount, Angle value1, Angle value2)
+    {
+        if (value1 == null || value2 == null)
+        {
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            throw new IllegalArgumentException(message);
+        }
+
+        if (amount < 0)
+            return value1;
+        else if (amount > 1)
+            return value2;
+
+        Quaternion quat = Quaternion.slerp(
+            amount,
+            Quaternion.fromAxisAngle(value1, Vec4.UNIT_X),
+            Quaternion.fromAxisAngle(value2, Vec4.UNIT_X));
+
+        Angle angle = quat.getRotationX();
+        if (Double.isNaN(angle.degrees))
+            return null;
+
+        return angle;
+    }
+
+    /**
+     * Computes the shortest distance between this and angle, as an angle.
+     *
+     * @param angle the angle to measure angular distance to.
+     *
+     * @return the angular distance between this and <code>value</code>.
+     */
+    public Angle angularDistanceTo(Angle angle)
+    {
+        if (angle == null)
+        {
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            throw new IllegalArgumentException(message);
+        }
+
+        double differenceDegrees = angle.subtract(this).degrees;
+        if (differenceDegrees < -180)
+            differenceDegrees += 360;
+        else if (differenceDegrees > 180)
+            differenceDegrees -= 360;
+
+        double absAngle = Math.abs(differenceDegrees);
+        return Angle.fromDegrees(absAngle);
     }
 
     @Override

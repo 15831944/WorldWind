@@ -315,4 +315,19 @@ public class Position extends LatLon
         sb.append(")");
         return sb.toString();
     }
+
+	public Angle getLatitude()
+	{
+		return this.latitude;
+	}
+
+	public Angle getLongitude()
+	{
+		return this.longitude;
+	}
+
+	public double getElevation()
+	{
+		return this.elevation;
+	}
 }

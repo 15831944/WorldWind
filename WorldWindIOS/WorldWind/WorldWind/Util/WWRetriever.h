@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WWRetriever.h 1980 2014-05-03 03:25:46Z tgaskins $
+ @version $Id: WWRetriever.h 2028 2014-05-23 00:02:30Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -77,6 +77,6 @@
 *
 * @return The HTTP retrieval status code, or 0 if there is no HTTP response available.
 */
-- (NSUInteger) httpStatusCode;
+- (NSInteger) httpStatusCode;
 
 @end

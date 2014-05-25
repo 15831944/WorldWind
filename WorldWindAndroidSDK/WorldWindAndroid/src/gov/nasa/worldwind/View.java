@@ -193,5 +193,20 @@ public interface View extends WWObject
      *
      * @return the position of the eye corresponding to the most recent state of this view
      */
-    Position getEyePosition(Globe globe);
+    public Position getEyePosition(Globe globe);
+    public Position getEyePosition();
+    
+ 
+    public void setEyePosition(Position value);
+	
+	Angle getHeading();
+	void setHeading(Angle value);
+	
+	// pitch or tilt
+	void setTilt(Angle angle);
+	public Angle getTilt();
+	
+	public Angle getRoll();
+	public void setRoll(Angle angle);
+
 }

@@ -24,7 +24,7 @@ import java.util.zip.*;
  * Tests the resolution of Style, StyleMap and styleUrl in a number of situations.
  *
  * @author tag
- * @version $Id: StyleLocationTests.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: StyleLocationTests.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class StyleLocationTests extends ApplicationTemplate
 {
@@ -634,7 +634,6 @@ public class StyleLocationTests extends ApplicationTemplate
                 public void run()
                 {
                     appFrame.getWwd().getModel().getLayers().add(layer);
-                    appFrame.getLayerPanel().update(appFrame.getWwd());
                 }
             });
         }

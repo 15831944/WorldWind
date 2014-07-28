@@ -209,4 +209,8 @@ public interface View extends WWObject
 	public Angle getRoll();
 	public void setRoll(Angle angle);
 
+	public Position getLookAtPosition();
+	public void setLookAtPosition(Position position);
+	
+	void setRange(double range);
 }

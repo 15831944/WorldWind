@@ -336,11 +336,13 @@ public class BasicView extends WWObjectImpl implements View
         return this.eyePoint;
     }
 
+	@Override
     public Position getLookAtPosition()
     {
         return this.lookAtPosition;
     }
 
+	@Override
     public void setLookAtPosition(Position position)
     {
         if (position == null)

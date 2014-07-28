@@ -293,8 +293,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
 
         if (latText != null && lonText != null)
         {
-            latText.setText(latitudeText);
-            lonText.setText(longitudeText);
+            latText.setText(String.format( "%.6f", position.latitude.degrees));
+            lonText.setText(String.format( "%.6f", position.longitude.degrees));
         }
     }
 
@@ -418,7 +418,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
     {
         BasicView view = (BasicView) this.eventSource.getView();
         Angle angle = view.getTilt();
-        double scalingFactor = 100;
+        double scalingFactor = 200;
         double newAngle = (angle.degrees + yVelocity * scalingFactor) % 360;
 
         if (newAngle < 0)

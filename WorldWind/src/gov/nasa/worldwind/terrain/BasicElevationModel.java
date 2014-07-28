@@ -9,6 +9,7 @@ import com.jogamp.common.nio.Buffers;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
+import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -47,7 +48,7 @@ import java.util.*;
 
 /**
  * @author Tom Gaskins
- * @version $Id: BasicElevationModel.java 1968 2014-04-28 18:08:35Z tgaskins $
+ * @version $Id: BasicElevationModel.java 2180 2014-07-25 22:35:46Z dcollins $
  */
 public class BasicElevationModel extends AbstractElevationModel implements BulkRetrievable
 {
@@ -527,17 +528,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     {
         try
         {
-            ByteBuffer byteBuffer;
-            synchronized (this.fileLock)
-            {
-                byteBuffer = WWIO.readURLContentToBuffer(url);
-            }
-
-            // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
-            AVList bufferParams = new AVListImpl();
-            bufferParams.setValue(AVKey.DATA_TYPE, this.elevationDataType);
-            bufferParams.setValue(AVKey.BYTE_ORDER, this.elevationDataByteOrder);
-            return BufferWrapper.wrap(byteBuffer, bufferParams);
+            if (url.getPath().endsWith("tif"))
+                return this.makeTiffElevations(url);
+            else
+                return this.makeBilElevations(url);
         }
         catch (java.io.IOException e)
         {
@@ -545,6 +539,101 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 "ElevationModel.ExceptionReadingElevationFile", url.toString());
             throw e;
         }
+    }
+
+    protected BufferWrapper makeBilElevations(URL url) throws IOException
+    {
+        ByteBuffer byteBuffer;
+        synchronized (this.fileLock)
+        {
+            byteBuffer = WWIO.readURLContentToBuffer(url);
+        }
+
+        // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
+        AVList bufferParams = new AVListImpl();
+        bufferParams.setValue(AVKey.DATA_TYPE, this.elevationDataType);
+        bufferParams.setValue(AVKey.BYTE_ORDER, this.elevationDataByteOrder);
+        return BufferWrapper.wrap(byteBuffer, bufferParams);
+    }
+
+    protected BufferWrapper makeTiffElevations(URL url) throws IOException
+    {
+        File file = new File(url.getPath());
+
+        // Create a raster reader for the file type.
+        DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
+            AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
+        DataRasterReader reader = readerFactory.findReaderFor(file, null);
+        if (reader == null)
+        {
+            String msg = Logging.getMessage("generic.UnknownFileFormatOrMatchingReaderNotFound", file.getPath());
+            Logging.logger().severe(msg);
+            throw new WWRuntimeException(msg);
+        }
+
+        // Read the file into the raster.
+        DataRaster[] rasters;
+        synchronized (this.fileLock)
+        {
+            rasters = reader.read(file, null);
+        }
+
+        if (rasters == null || rasters.length == 0)
+        {
+            String msg = Logging.getMessage("ElevationModel.CannotReadElevations", file.getAbsolutePath());
+            Logging.logger().severe(msg);
+            throw new WWRuntimeException(msg);
+        }
+
+        DataRaster raster = rasters[0];
+
+        // Request a sub-raster that contains the whole file. This step is necessary because only sub-rasters
+        // are reprojected (if necessary); primary rasters are not.
+        int width = raster.getWidth();
+        int height = raster.getHeight();
+
+        // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
+        // files associated with the elevations file.
+        final Sector sector = (Sector) raster.getValue(AVKey.SECTOR);
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
+            Logging.logger().severe(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        DataRaster subRaster = raster.getSubRaster(width, height, sector, raster);
+
+        // Verify that the sub-raster can create a ByteBuffer, then create one.
+        if (!(subRaster instanceof ByteBufferRaster))
+        {
+            String msg = Logging.getMessage("ElevationModel.CannotCreateElevationBuffer", file.getPath());
+            Logging.logger().severe(msg);
+            throw new WWRuntimeException(msg);
+        }
+        ByteBuffer elevations = ((ByteBufferRaster) subRaster).getByteBuffer();
+
+        // The sub-raster can now be disposed. Disposal won't affect the ByteBuffer.
+        subRaster.dispose();
+
+        // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
+        AVList bufferParams = new AVListImpl();
+        bufferParams.setValues(raster.copy()); // copies params from avlist
+
+        String dataType = bufferParams.getStringValue(AVKey.DATA_TYPE);
+        if (WWUtil.isEmpty(dataType))
+        {
+            String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.DATA_TYPE);
+            Logging.logger().severe(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        BufferWrapper bufferWrapper = BufferWrapper.wrap(elevations, bufferParams);
+
+        // Tne primary raster can now be disposed.
+        raster.dispose();
+
+        return bufferWrapper;
     }
 
     protected static ByteBuffer convertImageToElevations(ByteBuffer buffer, String contentType) throws IOException
@@ -1507,9 +1596,13 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             this.elevations = elevations;
             this.updateTime = System.currentTimeMillis();
 
-            for (int i = 0; i < this.elevations.length(); i++)
+            if (this.elevations.length() > 0)
             {
-                em.determineExtremes(this.elevations.getDouble(i), extremes);
+                this.extremes = WWUtil.defaultMinMix();
+                for (int i = 0; i < this.elevations.length(); i++)
+                {
+                    em.determineExtremes(this.elevations.getDouble(i), this.extremes);
+                }
             }
         }
 
@@ -1734,68 +1827,76 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     public ByteBuffer generateExtremeElevations(int levelNumber)
     {
         return null;
-//        long waitTime = 1000;
-//        long timeout = 10 * 60 * 1000;
-//
-//        ElevationModel.Elevations elevs;
-//        BasicElevationModel em = new EarthElevationModel();
-//
-//        double delta = 20d / Math.pow(2, levelNumber);
-//
-//        int numLats = (int) Math.ceil(180 / delta);
-//        int numLons = (int) Math.ceil(360 / delta);
-//
-//        System.out.printf("Building extreme elevations for layer %d, num lats %d, num lons %d\n",
-//            levelNumber, numLats, numLons);
-//
-//        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(2 * 2 * numLats * numLons);
-//        ShortBuffer buffer = byteBuffer.asShortBuffer();
-//        buffer.rewind();
-//
-//        Level level = this.levels.getLevel(levelNumber);
-//        for (int j = 0; j < numLats; j++)
-//        {
-//            double lat = -90 + j * delta;
-//            for (int i = 0; i < numLons; i++)
-//            {
-//                double lon = -180 + i * delta;
-//                Sector s = Sector.fromDegrees(lat, lat + delta, lon, lon + delta);
-//                long startTime = System.currentTimeMillis();
-//                while ((elevs = em.getElevations(s, level)) == null)
-//                {
-//                    try
-//                    {
-//                        Thread.sleep(waitTime);
-//                    }
-//                    catch (InterruptedException e)
-//                    {
-//                        e.printStackTrace();
-//                    }
-//                    if (System.currentTimeMillis() - startTime >= timeout)
-//                        break;
-//                }
-//
-//                if (elevs == null)
-//                {
-//                    System.out.printf("null elevations for (%f, %f) %s\n", lat, lon, s);
-//                    continue;
-//                }
-//
-//
-//                double[] extremes = elevs.getExtremes();
-//                if (extremes != null)
-//                {
-//                    System.out.printf("%d:%d, (%f, %f) min = %f, max = %f\n", j, i, lat, lon, extremes[0], extremes[1]);
-//                    buffer.put((short) extremes[0]).put((short) extremes[1]);
-//                }
-//                else
-//                    System.out.printf("no extremes for (%f, %f)\n", lat, lon);
-//            }
-//        }
-//
-//        return (ByteBuffer) buffer.rewind();
+        //Level level = this.levels.getLevel(levelNumber);
+        //Sector sector = this.levels.getSector();
+        //Angle latDelta = level.getTileDelta().getLatitude();
+        //Angle lonDelta = level.getTileDelta().getLongitude();
+        //Angle latOrigin = this.levels.getTileOrigin().getLatitude();
+        //Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        //
+        //int firstRow = Tile.computeRow(latDelta, sector.getMinLatitude(), latOrigin);
+        //int lastRow = Tile.computeRow(latDelta, sector.getMaxLatitude(), latOrigin);
+        //int firstCol = Tile.computeColumn(lonDelta, sector.getMinLongitude(), lonOrigin);
+        //int lastCol = Tile.computeColumn(lonDelta, sector.getMaxLongitude(), lonOrigin);
+        //
+        //int tileCount = (lastRow - firstRow + 1) * (lastCol - firstCol + 1);
+        //ByteBuffer byteBuffer = ByteBuffer.allocate(2 * 2 * tileCount);
+        //ShortBuffer buffer = byteBuffer.asShortBuffer();
+        //
+        //final Object condition = new Object();
+        //final PropertyChangeListener changeListener = new PropertyChangeListener()
+        //{
+        //    @Override
+        //    public void propertyChange(PropertyChangeEvent evt)
+        //    {
+        //        synchronized (condition)
+        //        {
+        //            condition.notifyAll();
+        //        }
+        //    }
+        //};
+        //this.addPropertyChangeListener(AVKey.ELEVATION_MODEL, changeListener);
+        //
+        //for (int row = firstRow; row <= lastRow; row++)
+        //{
+        //    System.out.printf("row %d/%d", row - firstRow, lastRow - firstRow);
+        //
+        //    for (int col = firstCol; col <= lastCol; col++)
+        //    {
+        //        TileKey key = new TileKey(levelNumber, row, col, level.getCacheName());
+        //        ElevationTile tile;
+        //
+        //        while ((tile = this.getTileFromMemory(key)) == null)
+        //        {
+        //            try
+        //            {
+        //                this.requestTile(key);
+        //
+        //                synchronized (condition)
+        //                {
+        //                    condition.wait(1000);
+        //                }
+        //            }
+        //            catch (InterruptedException e)
+        //            {
+        //                e.printStackTrace();
+        //            }
+        //        }
+        //
+        //        short min = (short) tile.extremes[0];
+        //        short max = (short) tile.extremes[1];
+        //        buffer.put(min).put(max);
+        //    }
+        //
+        //    System.out.println(" Done");
+        //}
+        //
+        //System.out.println("All rows Done");
+        //this.removePropertyChangeListener(AVKey.ELEVATION_MODEL, changeListener);
+        //
+        //return (ByteBuffer) byteBuffer.rewind();
     }
-//
+
 //    public final int getTileCount(Sector sector, int resolution)
 //    {
 //        if (sector == null)

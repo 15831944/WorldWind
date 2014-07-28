@@ -61,7 +61,7 @@ import java.util.zip.*;
  * data for these shapes is located in the World Wind project under src/gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip.
  *
  * @author dcollins
- * @version $Id: AirspaceBuilder.java 1674 2013-10-17 19:22:22Z dcollins $
+ * @version $Id: AirspaceBuilder.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AirspaceBuilder extends ApplicationTemplate
 {
@@ -1483,7 +1483,6 @@ public class AirspaceBuilder extends ApplicationTemplate
             this.airspaceLayer = new AirspaceLayer();
             this.airspaceLayer.setName(AIRSPACE_LAYER_NAME);
             insertBeforePlacenames(this.getWwd(), this.airspaceLayer);
-            this.getLayerPanel().update(this.getWwd());
 
             this.builderController = new AirspaceBuilderController(this);
             this.builderModel = new AirspaceBuilderModel();

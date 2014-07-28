@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.render;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
@@ -24,7 +23,7 @@ import java.util.Iterator;
  * ClutterFilter} for more information on decluttering.
  *
  * @author tag
- * @version $Id: DeclutteringTextRenderer.java 1181 2013-02-15 22:27:10Z dcollins $
+ * @version $Id: DeclutteringTextRenderer.java 2146 2014-07-11 17:37:04Z tgaskins $
  */
 public class DeclutteringTextRenderer
 {
@@ -112,7 +111,7 @@ public class DeclutteringTextRenderer
                 continue;
 
             double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
-            if (eyeDistance > horizon)
+            if (!dc.is2DGlobe() && eyeDistance > horizon)
                 continue;
 
             if (!frustumInModelCoords.contains(textPoint))

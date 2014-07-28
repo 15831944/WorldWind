@@ -42,7 +42,6 @@ public class EllipsoidalGlobe extends AbstractGlobe
             return this.globe;
         }
 
-        @SuppressWarnings({"RedundantIfStatement"})
         @Override
         public boolean equals(Object o)
         {
@@ -521,7 +520,6 @@ public class EllipsoidalGlobe extends AbstractGlobe
         }
     }
 
-    @SuppressWarnings({"SuspiciousNameCombination"})
     protected void cartesianToGeodetic(Vec4 cart, Position result)
     {
         // Contributed by Nathan Kronenfeld. Integrated 1/24/2011. Brings this calculation in line with Vermeille's

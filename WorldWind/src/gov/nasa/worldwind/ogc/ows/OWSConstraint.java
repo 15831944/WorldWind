@@ -14,11 +14,11 @@ import java.util.*;
 
 /**
  * @author tag
- * @version $Id: OWSConstraint.java 1981 2014-05-08 03:59:04Z tgaskins $
+ * @version $Id: OWSConstraint.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
 public class OWSConstraint extends AbstractXMLEventParser
 {
-    protected Set<OWSAllowedValues> allowedValues = new HashSet<OWSAllowedValues>(1);
+    protected List<OWSAllowedValues> allowedValues = new ArrayList<OWSAllowedValues>(1);
 
     public OWSConstraint(String namespaceURI)
     {
@@ -30,7 +30,7 @@ public class OWSConstraint extends AbstractXMLEventParser
         return (String) this.getField("name");
     }
 
-    public Set<OWSAllowedValues> getAllowedValues()
+    public List<OWSAllowedValues> getAllowedValues()
     {
         return this.allowedValues;
     }

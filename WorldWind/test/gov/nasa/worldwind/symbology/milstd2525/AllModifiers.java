@@ -22,7 +22,7 @@ import java.util.List;
  * Test program that renders MIL-STD-2525C symbols with all combinations of graphic modifiers.
  *
  * @author pabercrombie
- * @version $Id: AllModifiers.java 601 2012-05-21 22:24:21Z pabercrombie $
+ * @version $Id: AllModifiers.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AllModifiers extends ApplicationTemplate
 {
@@ -106,9 +106,6 @@ public class AllModifiers extends ApplicationTemplate
 
             // Add the symbol layer to the World Wind model.
             this.getWwd().getModel().getLayers().add(layer);
-
-            // Update the layer panel to display the symbol layer.
-            this.getLayerPanel().update(this.getWwd());
         }
 
         protected TacticalSymbol addSymbol(String sidc, double lat, double lon, RenderableLayer layer)

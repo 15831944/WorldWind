@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WorldWind.m 1324 2013-05-10 18:15:57Z dcollins $
+ @version $Id: WorldWind.m 2035 2014-05-28 20:33:52Z tgaskins $
  */
 
 #import "SystemConfiguration/SystemConfiguration.h"
@@ -27,10 +27,10 @@ static NSLock* wwOfflineModeLock;
         initialized = YES;
 
         wwRetrievalQueue = [[NSOperationQueue alloc] init];
-        [wwRetrievalQueue setMaxConcurrentOperationCount:4];
+        [wwRetrievalQueue setMaxConcurrentOperationCount:10];
 
         wwLoadQueue = [[NSOperationQueue alloc] init];
-        [wwLoadQueue setMaxConcurrentOperationCount:4];
+        [wwLoadQueue setMaxConcurrentOperationCount:10];
 
         wwResourceLoader = [[WWResourceLoader alloc] init];
 

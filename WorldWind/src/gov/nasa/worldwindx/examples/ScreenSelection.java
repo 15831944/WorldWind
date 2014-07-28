@@ -24,7 +24,7 @@ import java.util.List;
  * multiple-object selection in screen space.
  *
  * @author dcollins
- * @version $Id: ScreenSelection.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: ScreenSelection.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class ScreenSelection extends ApplicationTemplate
 {
@@ -49,7 +49,7 @@ public class ScreenSelection extends ApplicationTemplate
             JButton btn = new JButton(new EnableSelectorAction());
             JPanel panel = new JPanel(new BorderLayout(5, 5));
             panel.add(btn, BorderLayout.CENTER);
-            this.getLayerPanel().add(panel, BorderLayout.SOUTH);
+            this.getControlPanel().add(panel, BorderLayout.SOUTH);
 
             // Create layer of highlightable shapes to select.
             this.addShapes();

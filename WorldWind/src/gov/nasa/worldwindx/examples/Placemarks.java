@@ -19,7 +19,7 @@ import java.awt.*;
  * Illustrates how to use {@link gov.nasa.worldwind.render.PointPlacemark}.
  *
  * @author tag
- * @version $Id: Placemarks.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: Placemarks.java 2114 2014-07-01 17:45:30Z tgaskins $
  */
 public class Placemarks extends ApplicationTemplate
 {
@@ -161,11 +161,38 @@ public class Placemarks extends ApplicationTemplate
             pp.setAttributes(attrs);
             layer.addRenderable(pp);
 
+            pp = new PointPlacemark(Position.fromDegrees(30, 179.9, 100e3));
+            pp.setValue(AVKey.DISPLAY_NAME, "Near dateline,  Clamp to ground, NASA icon, Heading -45, Globe relative");
+            pp.setLabelText("Placemark J");
+            pp.setLineEnabled(false);
+            pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+            attrs = new PointPlacemarkAttributes(attrs);
+            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/georss.png");
+            attrs.setHeading(-45d);
+            attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
+            attrs.setScale(0.6);
+            attrs.setLabelColor("ffffffff");
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            pp.setAttributes(attrs);
+            layer.addRenderable(pp);
+
+            pp = new PointPlacemark(Position.fromDegrees(90, 0, 100e3));
+            pp.setValue(AVKey.DISPLAY_NAME, "North Pole,  Clamp to ground, NASA icon, Heading -45, Globe relative");
+            pp.setLabelText("Placemark K");
+            pp.setLineEnabled(false);
+            pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+            attrs = new PointPlacemarkAttributes(attrs);
+            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/georss.png");
+            attrs.setHeading(-45d);
+            attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
+            attrs.setScale(0.6);
+            attrs.setLabelColor("ffffffff");
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            pp.setAttributes(attrs);
+            layer.addRenderable(pp);
+
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
-
-            // Update layer panel
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

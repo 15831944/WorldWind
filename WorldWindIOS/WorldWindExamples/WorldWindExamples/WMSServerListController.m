@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WMSServerListController.m 1470 2013-06-21 18:10:59Z tgaskins $
+ @version $Id: WMSServerListController.m 2078 2014-06-23 17:23:25Z tgaskins $
  */
 
 #import "WMSServerListController.h"
@@ -55,6 +55,7 @@ NSString* WW_WMS_SERVER_ADDRESS = @"WMSServerAddress";
     if (serverList == nil)
     {
         [self addServer:@"http://neowms.sci.gsfc.nasa.gov/wms/wms" serviceTitle:@"NASA Earth Observations (NEO) WMS"];
+        [self addServer:@"http://sedac.ciesin.columbia.edu/geoserver/wms" serviceTitle:@"Columbia University CIESIN"];
     }
     else
     {

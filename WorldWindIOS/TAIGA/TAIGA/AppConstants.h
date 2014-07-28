@@ -2,13 +2,18 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppConstants.h 2025 2014-05-23 00:00:09Z tgaskins $
+ @version $Id: AppConstants.h 2173 2014-07-24 20:28:32Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
+#import "DDLog.h"
 
-#define TAIGA_VERSION (@"0.0035")
-#define TAIGA_VERSION_DATE (@"5/21/14")
+static const int ddLogLevel = LOG_LEVEL_INFO;
+
+#define TAIGA_VERSION (@"0.0042")
+#define TAIGA_VERSION_DATE (@"7/24/14")
+
+#define TAIGA_DATA_HOST @"worldwindserver.net"
 
 #define TAIGA_CURRENT_AIRCRAFT_POSITION (@"gov.nasa.worldwind.taiga.currentaircraftposition")
 #define TAIGA_DATA_FILE_ID (@"gov.nasa.worldwind.taiga.data.file.id")
@@ -23,7 +28,11 @@
 #define TAIGA_FLIGHT_ROUTE_WAYPOINT_REMOVED (@"gov.nasa.worldwind.taiga.flightroute.waypoint.removed")
 #define TAIGA_FLIGHT_ROUTE_WAYPOINT_REPLACED (@"gov.nasa.worldwind.taiga.flightroute.waypoint.replaced")
 #define TAIGA_FLIGHT_ROUTE_WAYPOINT_MOVED (@"gov.nasa.worldwind.taiga.flightroute.waypoint.moved")
+#define TAIGA_GDB_DEVICE_ADDRESS (@"gov.nasa.worldwind.taiga.gdb.device.address")
+#define TAIGA_GDB_DEVICE_UPDATE_FREQUENCY (@"gov.nasa.worldwind.taiga.gdb.device.update.frequency")
+#define TAIGA_GDB_MESSAGE (@"gov.nasa.worldwind.taiga.gdb.message")
 #define TAIGA_GPS_DEVICE_ADDRESS (@"gov.nasa.worldwind.taiga.gpsaddress")
+#define TAIGA_GPS_DEVICE_UPDATE_FREQUENCY (@"gov.nasa.worldwind.taiga.gps.device.update.frequency")
 #define TAIGA_GPS_QUALITY (@"gov.nasa.worldwind.taiga.gpsfixquality")
 #define TAIGA_GPS_SOURCE (@"gov.nasa.worldwind.taiga.gpssource")
 #define TAIGA_HIDDEN_LAYER (@"gov.nasa.worldwind.taiga.hiddenlayer")

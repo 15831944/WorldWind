@@ -8,7 +8,7 @@ package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.exception.WWRuntimeException;
+import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.SurfaceQuad;
@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  * time allowed for retrieving data. Operations fail if the timeout is exceeded.
  *
  * @author tag
- * @version $Id: HighResolutionTerrain.java 1970 2014-04-29 00:45:11Z tgaskins $
+ * @version $Id: HighResolutionTerrain.java 2056 2014-06-13 00:55:07Z tgaskins $
  */
 public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 {
@@ -432,6 +432,12 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
          * @param intersections An array of intersections.
          */
         void intersection(Position pA, Position pB, Intersection[] intersections);
+
+        /**
+         * Called if an exception occurs during intersection testing.
+         * @param exception the exception thrown.
+         */
+        void exception(Exception exception);
     }
 
     /**
@@ -464,10 +470,17 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
                 @Override
                 public void run()
                 {
-                    Intersection[] intersections = intersect(pA, pB);
-                    if (intersections != null)
+                    try
                     {
-                        callback.intersection(pA, pB, intersections);
+                        Intersection[] intersections = intersect(pA, pB);
+                        if (intersections != null)
+                        {
+                            callback.intersection(pA, pB, intersections);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        callback.exception(e);
                     }
                 }
             });
@@ -991,7 +1004,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             if (this.startTime.get() != null && timeout != null)
             {
                 if (System.currentTimeMillis() - this.startTime.get() > timeout)
-                    throw new WWRuntimeException("Terrain convergence timed out");
+                    throw new WWTimeoutException("Terrain convergence timed out");
             }
         }
 

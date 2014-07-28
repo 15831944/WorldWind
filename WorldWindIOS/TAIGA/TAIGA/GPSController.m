@@ -2,7 +2,7 @@
  Copyright (C) 2014 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: GPSController.m 1983 2014-05-08 17:58:01Z tgaskins $
+ @version $Id: GPSController.m 2169 2014-07-23 22:24:36Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -14,6 +14,7 @@
 #import "Settings.h"
 
 #define DEFAULT_GPS_DEVICE_ADDRESS @"http://worldwind.arc.nasa.gov/alaska/gps/gps.txt"
+#define DEFAULT_GPS_DEVICE_UPDATE_FREQUENCY (3)
 
 @implementation GPSController
 {
@@ -34,8 +35,8 @@
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     [dateFormatter setDateFormat:@"yyyy MM dd HH mm ss"];
 
-    timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(pollDevice)
-                                           userInfo:nil repeats:YES];
+    [self startTimer];
+    [self pollDevice];
 
     return self;
 }
@@ -46,6 +47,29 @@
     timer = nil;
     dateFormatter = nil;
 }
+
+- (void) startTimer
+{
+    if (timer != nil)
+        [timer invalidate];
+
+//    int updateFrequency = [Settings getIntForName:TAIGA_GPS_DEVICE_UPDATE_FREQUENCY
+//                                     defaultValue:DEFAULT_GPS_DEVICE_UPDATE_FREQUENCY];
+    timer = [NSTimer scheduledTimerWithTimeInterval:DEFAULT_GPS_DEVICE_UPDATE_FREQUENCY
+                                             target:self selector:@selector(pollDevice)
+                                           userInfo:nil repeats:YES];
+}
+//
+//- (void) setUpdateFrequency:(int)updateFrequency
+//{
+//    [Settings setInt:updateFrequency forName:TAIGA_GPS_DEVICE_UPDATE_FREQUENCY];
+//    [self startTimer];
+//}
+//
+//- (int) getUpdateFrequency
+//{
+//    return [Settings getIntForName:TAIGA_GPS_DEVICE_UPDATE_FREQUENCY defaultValue:DEFAULT_GPS_DEVICE_UPDATE_FREQUENCY];
+//}
 
 - (void) pollDevice
 {
@@ -135,12 +159,12 @@
 
     CLLocationDirection course = 0;
     if ([rmcSentence fieldWithName:NMEA_FIELD_TRACK_ANGLE] != nil)
-        course = [[ggaSentence fieldWithName:NMEA_FIELD_TRACK_ANGLE] doubleValue];
+        course = [[rmcSentence fieldWithName:NMEA_FIELD_TRACK_ANGLE] doubleValue];
 
     CLLocationSpeed speed = 0;
     if ([rmcSentence fieldWithName:NMEA_FIELD_SPEED_OVER_GROUND] != nil)
-        course = [[ggaSentence fieldWithName:NMEA_FIELD_SPEED_OVER_GROUND] doubleValue];
-    course *= TAIGA_KNOTS_TO_METERS_PER_SECOND;
+        speed = [[rmcSentence fieldWithName:NMEA_FIELD_SPEED_OVER_GROUND] doubleValue];
+    speed *= TAIGA_KNOTS_TO_METERS_PER_SECOND;
 
     NSDate* fixDate = [self dateFromRMCSentence:rmcSentence];
     if (fixDate == nil)
@@ -161,10 +185,11 @@
     // Send the known GPS quality, or nil if the quality is not available.
     NMEASentence* ggaSentence = [mostRecentSentences objectForKey:NMEA_SENTENCE_TYPE_GPGGA];
     NSString* quality = ggaSentence != nil ? [ggaSentence fieldWithName:NMEA_FIELD_FIX_QUALITY] : nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:quality];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY
+                                                        object:[NSNumber numberWithDouble:[quality intValue]]];
 }
 
-- (NSDate*)dateFromRMCSentence:(NMEASentence*)rmcSentence
+- (NSDate*) dateFromRMCSentence:(NMEASentence*)rmcSentence
 {
     NSString* dateString = [rmcSentence fieldWithName:NMEA_FIELD_FIX_DATE];
     NSString* timeString = [rmcSentence fieldWithName:NMEA_FIELD_FIX_TIME];

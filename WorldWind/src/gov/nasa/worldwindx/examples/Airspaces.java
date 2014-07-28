@@ -45,7 +45,7 @@ import java.util.*;
  * locations.</li> </ul>
  *
  * @author dcollins
- * @version $Id: Airspaces.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: Airspaces.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class Airspaces extends ApplicationTemplate
 {
@@ -65,30 +65,20 @@ public class Airspaces extends ApplicationTemplate
     {
         protected AirspacesController controller;
         protected AirspacesPanel airspacesPanel;
-        protected FlatWorldPanel flatWorldPanel;
 
         public AppFrame()
         {
             this.controller = new AirspacesController(this);
             this.controller.actionPerformed(new ActionEvent(this, 0, ACTION_COMMAND_LOAD_DEMO_AIRSPACES));
-            this.getLayerPanel().update(this.getWwd());
 
             this.airspacesPanel = new AirspacesPanel();
             this.airspacesPanel.addActionListener(this.controller);
 
-            this.flatWorldPanel = new FlatWorldPanel(this.getWwd());
-
             javax.swing.Box box = javax.swing.Box.createVerticalBox();
             box.add(this.airspacesPanel);
-            box.add(this.flatWorldPanel);
-            this.getLayerPanel().add(box, BorderLayout.SOUTH);
+            this.getControlPanel().add(box, BorderLayout.SOUTH);
 
             this.pack();
-        }
-
-        public LayerPanel getLayerPanel()
-        {
-            return this.layerPanel;
         }
     }
 

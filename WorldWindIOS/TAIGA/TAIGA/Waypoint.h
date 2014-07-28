@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: Waypoint.h 1905 2014-04-08 18:11:27Z dcollins $
+ @version $Id: Waypoint.h 2046 2014-05-30 21:56:02Z dcollins $
  */
 
 #import <Foundation/Foundation.h>

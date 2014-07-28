@@ -18,7 +18,7 @@ import java.io.InputStream;
 
 /**
  * @author tag
- * @version $Id: AntennaViewer.java 349 2012-02-08 02:59:18Z tgaskins $
+ * @version $Id: AntennaViewer.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AntennaViewer extends ApplicationTemplate
 {
@@ -71,8 +71,6 @@ public class AntennaViewer extends ApplicationTemplate
             layer.setName("Antenna Axes");
             layer.setPickEnabled(false);
             insertBeforeCompass(getWwd(), layer);
-
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

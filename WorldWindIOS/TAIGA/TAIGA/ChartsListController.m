@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: ChartsListController.m 2026 2014-05-23 00:01:24Z tgaskins $
+ @version $Id: ChartsListController.m 2165 2014-07-22 18:26:05Z tgaskins $
  */
 
 #import "ChartsListController.h"
@@ -33,7 +33,7 @@
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.autoresizesSubviews = YES;
 
-    chartsServer = @"http://worldwindserver.net/taiga/charts/airports";
+    chartsServer = [NSString stringWithFormat:@"http://%@/taiga/charts/airports", TAIGA_DATA_HOST];
 
     NSString* cacheDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     airportsCachePath = [cacheDir stringByAppendingPathComponent:@"charts/airports"];
@@ -124,6 +124,7 @@
         return [nameA compare:nameB];
     }];
 
+    [filteredCharts removeAllObjects];
     [filteredCharts addObjectsFromArray:airportCharts];
 
     [[self tableView] reloadData];

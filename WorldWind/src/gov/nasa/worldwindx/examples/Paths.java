@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * turned into a curtain by extruding the path to the ground.
  *
  * @author tag
- * @version $Id: Paths.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: Paths.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class Paths extends ApplicationTemplate
 {
@@ -76,9 +76,6 @@ public class Paths extends ApplicationTemplate
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
-
-            // Update layer panel
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

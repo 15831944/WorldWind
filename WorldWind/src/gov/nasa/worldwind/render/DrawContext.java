@@ -25,7 +25,7 @@ import java.util.Queue;
 
 /**
  * @author Tom Gaskins
- * @version $Id: DrawContext.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: DrawContext.java 2112 2014-07-01 17:17:43Z tgaskins $
  */
 public interface DrawContext extends WWObject, Disposable
 {
@@ -1000,4 +1000,8 @@ public interface DrawContext extends WWObject, Disposable
      * @return the current clutter filter.
      */
     ClutterFilter getClutterFilter();
+
+    boolean is2DGlobe();
+
+    boolean isContinuous2DGlobe();
 }

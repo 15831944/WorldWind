@@ -14,15 +14,15 @@ import java.util.*;
 
 /**
  * @author tag
- * @version $Id: OWSOperation.java 1981 2014-05-08 03:59:04Z tgaskins $
+ * @version $Id: OWSOperation.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
 public class OWSOperation extends AbstractXMLEventParser
 {
     // TODO: Operation Metadata element
 
-    protected Set<OWSDCP> dcps = new HashSet<OWSDCP>(2);
-    protected Set<OWSParameter> parameters = new HashSet<OWSParameter>(1);
-    protected Set<OWSConstraint> constraints = new HashSet<OWSConstraint>(1);
+    protected List<OWSDCP> dcps = new ArrayList<OWSDCP>(2);
+    protected List<OWSParameter> parameters = new ArrayList<OWSParameter>(1);
+    protected List<OWSConstraint> constraints = new ArrayList<OWSConstraint>(1);
 
     public OWSOperation(String namespaceURI)
     {
@@ -34,17 +34,17 @@ public class OWSOperation extends AbstractXMLEventParser
         return (String) this.getField("name");
     }
 
-    public Set<OWSDCP> getDCPs()
+    public List<OWSDCP> getDCPs()
     {
         return this.dcps;
     }
 
-    public Set<OWSParameter> getParameters()
+    public List<OWSParameter> getParameters()
     {
         return this.parameters;
     }
 
-    public Set<OWSConstraint> getConstraints()
+    public List<OWSConstraint> getConstraints()
     {
         return this.constraints;
     }

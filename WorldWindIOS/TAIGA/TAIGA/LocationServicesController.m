@@ -2,7 +2,7 @@
  Copyright (C) 2014 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: LocationServicesController.m 1989 2014-05-09 23:58:29Z tgaskins $
+ @version $Id: LocationServicesController.m 2159 2014-07-21 19:54:43Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -23,6 +23,7 @@
     locationManager = [[CLLocationManager alloc] init];
     [locationManager setActivityType:CLActivityTypeOtherNavigation];
     [locationManager setDesiredAccuracy:kCLLocationAccuracyBestForNavigation];
+    [locationManager setDistanceFilter:50];
     [locationManager setDelegate:self];
 
     [self setMode:LocationServicesControllerModeAllChanges];
@@ -92,7 +93,8 @@
         double horizontalAccuracy = [location horizontalAccuracy];
         if (horizontalAccuracy < 0)
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:location];
+            [[NSNotificationCenter defaultCenter]
+                    postNotificationName:TAIGA_GPS_QUALITY object:[NSNumber numberWithDouble:horizontalAccuracy]];
             return NO;
         }
         else
@@ -107,7 +109,8 @@
 
 - (void) postCurrentPosition
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:currentLocation];
+    double horizontalAccuracy = [currentLocation horizontalAccuracy];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:[NSNumber numberWithDouble:horizontalAccuracy]];
     [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_CURRENT_AIRCRAFT_POSITION object:currentLocation];
 }
 

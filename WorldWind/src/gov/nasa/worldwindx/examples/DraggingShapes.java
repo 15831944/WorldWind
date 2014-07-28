@@ -19,7 +19,7 @@ import java.util.Arrays;
  * form when dragged.
  *
  * @author dcollins
- * @version $Id: DraggingShapes.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: DraggingShapes.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class DraggingShapes extends ApplicationTemplate
 {
@@ -182,7 +182,6 @@ public class DraggingShapes extends ApplicationTemplate
 
             // Add the layer to the model and update the layer panel.
             insertBeforeCompass(this.getWwd(), layer);
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

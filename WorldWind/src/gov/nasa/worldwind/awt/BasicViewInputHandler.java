@@ -14,7 +14,7 @@ import java.awt.event.*;
 
 /**
  * @author dcollins
- * @version $Id: BasicViewInputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: BasicViewInputHandler.java 2179 2014-07-25 21:43:39Z dcollins $
  */
 public abstract class BasicViewInputHandler extends AbstractViewInputHandler
 {
@@ -915,91 +915,6 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
     }
 
     protected void handleViewStopped()
-    {
-
-    }
-
-    //**************************************************************//
-    //********************  Empty Action Handlers  *****************//
-    //**************************************************************//
-    protected void onHorizontalTranslateAbs(Angle latitudeChange, Angle longitudeChange,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    protected void onMoveTo(Position focalPosition, ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    protected void onResetHeading(ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-
-    protected void onResetHeadingPitchRoll(ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onRotateView(Angle headingChange, Angle pitchChange,
-        double totalHeadingInput, double totalPitchInput,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onRotateView(double headingChange, double pitchChange,
-        ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onVerticalTranslate(double translateChange,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onVerticalTranslate(double translateChange,
-        ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onHorizontalTranslateRel(double forwardInput, double sideInput,
-        double totalForwardInput, double totalSideInput,
-        ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onHorizontalTranslateRel(double forwardChange, double sideChange,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onMoveTo(Position focalPosition, ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void goTo(Position lookAtPos, double elevation)
     {
 
     }

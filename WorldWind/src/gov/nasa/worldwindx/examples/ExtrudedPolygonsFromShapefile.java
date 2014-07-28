@@ -26,7 +26,7 @@ import java.util.Map;
  * Use the File menu to open a shapefile containing pre-defined extruded shapes.
  *
  * @author tag
- * @version $Id: ExtrudedPolygonsFromShapefile.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: ExtrudedPolygonsFromShapefile.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class ExtrudedPolygonsFromShapefile extends ApplicationTemplate
 {
@@ -76,15 +76,6 @@ public class ExtrudedPolygonsFromShapefile extends ApplicationTemplate
                 {
                     sf.close();
                 }
-
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        insertBeforePlacenames(wwd, layer);
-                        AppFrame.this.getLayerPanel().update(wwd);
-                    }
-                });
 
                 this.wwd.addSelectListener(new SelectListener()
                 {

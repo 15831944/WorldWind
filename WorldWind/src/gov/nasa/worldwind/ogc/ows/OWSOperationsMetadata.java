@@ -14,24 +14,24 @@ import java.util.*;
 
 /**
  * @author tag
- * @version $Id: OWSOperationsMetadata.java 1981 2014-05-08 03:59:04Z tgaskins $
+ * @version $Id: OWSOperationsMetadata.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
 public class OWSOperationsMetadata extends AbstractXMLEventParser
 {
-    protected Set<OWSOperation> operations = new HashSet<OWSOperation>(2);
-    protected Set<OWSConstraint> constraints = new HashSet<OWSConstraint>(1);
+    protected List<OWSOperation> operations = new ArrayList<OWSOperation>(2);
+    protected List<OWSConstraint> constraints = new ArrayList<OWSConstraint>(1);
 
     public OWSOperationsMetadata(String namespaceURI)
     {
         super(namespaceURI);
     }
 
-    public Set<OWSOperation> getOperations()
+    public List<OWSOperation> getOperations()
     {
         return this.operations;
     }
 
-    public Set<OWSConstraint> getConstraints()
+    public List<OWSConstraint> getConstraints()
     {
         return this.constraints;
     }

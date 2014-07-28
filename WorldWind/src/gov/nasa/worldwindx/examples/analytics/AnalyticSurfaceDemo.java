@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * altitude.</li> </ul>
  *
  * @author dcollins
- * @version $Id: AnalyticSurfaceDemo.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: AnalyticSurfaceDemo.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AnalyticSurfaceDemo extends ApplicationTemplate
 {
@@ -57,7 +57,6 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
             this.analyticSurfaceLayer.setPickEnabled(false);
             this.analyticSurfaceLayer.setName("Analytic Surfaces");
             insertBeforePlacenames(this.getWwd(), this.analyticSurfaceLayer);
-            this.getLayerPanel().update(this.getWwd());
 
             createRandomAltitudeSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
             createRandomColorSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);

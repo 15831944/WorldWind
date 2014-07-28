@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: ViewSelectionController.m 1815 2014-01-14 20:14:42Z dcollins $
+ @version $Id: ViewSelectionController.m 2174 2014-07-24 20:29:01Z tgaskins $
  */
 
 #import "ViewSelectionController.h"
@@ -111,7 +111,6 @@
     {
         [[cell textLabel] setText:@"Terrain Profile"];
         [[cell imageView] setHidden:!terrainProfileVisible];
-        [cell setAccessoryType:UITableViewCellAccessoryDetailButton];
     }
 
     return cell;

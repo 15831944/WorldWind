@@ -7,28 +7,21 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
-import gov.nasa.worldwind.layers.IconLayer;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.SkyColorLayer;
-import gov.nasa.worldwind.layers.SkyGradientLayer;
-import gov.nasa.worldwind.pick.PickedObject;
-import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.UserFacingIcon;
 import gov.nasa.worldwind.view.orbit.FlatOrbitView;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 
 /**
  * Shows how to detect picked icons. Place the cursor over the icons to see the response printed to the console.
  *
  * @author Patrick Murris
- * @version $Id: IconPicking.java 1940 2014-04-16 00:57:28Z tgaskins $
+ * @version $Id: IconPicking.java 2109 2014-06-30 16:52:38Z tgaskins $
  * @see gov.nasa.worldwind.globes.FlatGlobe
  * @see EarthFlat
  * @see FlatOrbitView
@@ -79,7 +72,6 @@ public class IconPicking extends ApplicationTemplate
                 if (layers.get(i) instanceof SkyGradientLayer)
                     layers.set(i, new SkyColorLayer());
             }
-            this.getLayerPanel().update(this.getWwd());
 
             this.getWwd().addSelectListener(new SelectListener()
             {
@@ -98,8 +90,6 @@ public class IconPicking extends ApplicationTemplate
                 }
             });
             this.getWwd().getSceneController().setDeepPickEnabled(true);
-            // Add flat world projection control panel
-            this.getLayerPanel().add(new FlatWorldPanel(this.getWwd()), BorderLayout.SOUTH);
         }
     }
 

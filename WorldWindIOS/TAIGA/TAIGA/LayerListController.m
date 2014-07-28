@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: LayerListController.m 1999 2014-05-14 23:55:07Z tgaskins $
+ @version $Id: LayerListController.m 2167 2014-07-22 22:27:58Z dcollins $
  */
 
 #import "LayerListController.h"
@@ -24,6 +24,8 @@
 #import "WeatherCamLayer.h"
 #import "DAFIFLayer.h"
 #import "WaypointLayer.h"
+#import "AircraftTrackLayer.h"
+#import "AircraftTrackDetailController.h"
 
 @implementation LayerListController
 
@@ -40,6 +42,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleNotification:)
                                                  name:WW_LAYER_LIST_CHANGED
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleRefreshNotification:)
+                                                 name:TAIGA_REFRESH_COMPLETE
                                                object:nil];
 
     return self;
@@ -91,15 +98,17 @@
     WWLayer* layer = [[self nonHiddenLayers] objectAtIndex:(NSUInteger) [indexPath row]];
 
     if ([layer isKindOfClass:[METARLayer class]]
-            || [layer isKindOfClass:[PIREPLayer class]]
-            || [layer isKindOfClass:[WeatherCamLayer class]])
+            || [layer isKindOfClass:[PIREPLayer class]])
     {
         static NSString* cellWithRefreshIdentifier = @"cellWithRefreshButton";
         cell = [tableView dequeueReusableCellWithIdentifier:cellWithRefreshIdentifier];
 
         if (cell == nil)
         {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+            UITableViewCellStyle cellStyle = ([layer isKindOfClass:[METARLayer class]]
+                    || [layer isKindOfClass:[PIREPLayer class]])
+                    ? UITableViewCellStyleSubtitle : UITableViewCellStyleDefault;
+            cell = [[UITableViewCell alloc] initWithStyle:cellStyle
                                           reuseIdentifier:cellWithRefreshIdentifier];
             [[cell imageView] setImage:[UIImage imageNamed:@"431-yes.png"]];
             [cell setAccessoryType:UITableViewCellAccessoryDetailButton];
@@ -132,7 +141,24 @@
     [[cell imageView] setHidden:![layer enabled]];
     [[cell accessoryView] setTag:[indexPath row]];
 
+    if ([layer isKindOfClass:[METARLayer class]])
+        [[cell detailTextLabel] setText:[self formatDate:[((METARLayer*) layer) lastUpdate]]];
+    else if ([layer isKindOfClass:[PIREPLayer class]])
+        [[cell detailTextLabel] setText:[self formatDate:[((PIREPLayer*) layer) lastUpdate]]];
+
     return cell;
+}
+
+- (NSString*) formatDate:(NSDate*)date
+{
+    if (date == nil)
+        return @"Select to update";
+
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterShortStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+
+    return [NSString stringWithFormat:@"Updated %@", [formatter stringFromDate:date]];
 }
 
 - (void) tableView:(UITableView*)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath*)indexPath
@@ -151,7 +177,9 @@
     }
     else if ([layer isKindOfClass:[WWRenderableLayer class]])
     {
-        bool showRefreshButton = [layer isKindOfClass:[DAFIFLayer class]] || [layer isKindOfClass:[WaypointLayer class]];
+        bool showRefreshButton = [layer isKindOfClass:[DAFIFLayer class]]
+                || [layer isKindOfClass:[WaypointLayer class]]
+                || [layer isKindOfClass:[WeatherCamLayer class]];
         RenderableLayerDetailController* detailController =
                 [[RenderableLayerDetailController alloc] initWithLayer:(WWRenderableLayer*) layer
                                                   refreshButtonEnabled:showRefreshButton];
@@ -164,6 +192,12 @@
         TerrainAltitudeDetailController* detailController =
                 [[TerrainAltitudeDetailController alloc] initWithLayer:(WWElevationShadingLayer*) layer];
 
+        [((UINavigationController*) [self parentViewController]) pushViewController:detailController animated:YES];
+    }
+    else if ([layer isKindOfClass:[AircraftTrackLayer class]])
+    {
+        AircraftTrackDetailController* detailController =
+                [[AircraftTrackDetailController alloc] initWithLayer:(AircraftTrackLayer*) layer];
         [((UINavigationController*) [self parentViewController]) pushViewController:detailController animated:YES];
     }
 }
@@ -214,4 +248,14 @@
         [[self tableView] reloadData];
     }
 }
+
+
+- (void) handleRefreshNotification:(NSNotification*)notification
+{
+    if ([[notification name] isEqualToString:TAIGA_REFRESH_COMPLETE])
+    {
+        [[self tableView] reloadData];
+    }
+}
+
 @end

@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * InstallImagery}</code> and <code>{@link InstallElevations}</code>.
  *
  * @author dcollins
- * @version $Id: InstallImageryAndElevationsDemo.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: InstallImageryAndElevationsDemo.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 {
@@ -49,18 +49,6 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             this.installedDataFrame = new InstalledDataFrame(WorldWind.getDataFileStore(), this.getWwd());
             WWUtil.alignComponent(this, this.installedDataFrame, AVKey.RIGHT);
             this.installedDataFrame.setVisible(true);
-
-            // Setup AVKey.LAYERS property change events to refresh the LayerPanel.
-            this.getWwd().getModel().addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent event)
-                {
-                    if (event.getPropertyName().equals(AVKey.LAYERS))
-                    {
-                        getLayerPanel().update(getWwd());
-                    }
-                }
-            });
 
             this.layoutComponents();
         }
@@ -85,7 +73,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             Box box = Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // top, left, bottom, right
             box.add(button);
-            this.getLayerPanel().add(box, BorderLayout.SOUTH);
+            this.getControlPanel().add(box, BorderLayout.SOUTH);
             this.validate();
             this.pack();
         }

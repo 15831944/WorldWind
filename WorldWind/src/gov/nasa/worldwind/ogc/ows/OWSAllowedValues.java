@@ -15,18 +15,18 @@ import java.util.*;
 
 /**
  * @author tag
- * @version $Id: OWSAllowedValues.java 1981 2014-05-08 03:59:04Z tgaskins $
+ * @version $Id: OWSAllowedValues.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
 public class OWSAllowedValues extends AbstractXMLEventParser
 {
-    protected Set<String> values = new HashSet<String>(2);
+    protected List<String> values = new ArrayList<String>(2);
 
     public OWSAllowedValues(String namespaceURI)
     {
         super(namespaceURI);
     }
 
-    public Set<String> getValues()
+    public List<String> getValues()
     {
         return this.values;
     }

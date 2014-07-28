@@ -16,7 +16,7 @@ import java.util.*;
 
 /**
  * @author tag
- * @version $Id: HighResolutionTerrainTest.java 1970 2014-04-29 00:45:11Z tgaskins $
+ * @version $Id: HighResolutionTerrainTest.java 2056 2014-06-13 00:55:07Z tgaskins $
  */
 public class HighResolutionTerrainTest
 {
@@ -83,6 +83,11 @@ public class HighResolutionTerrainTest
                         public void intersection(Position pA, Position pB, Intersection[] intersections)
                         {
                             currentIntersections.put(pB, intersections);
+                        }
+
+                        public void exception(Exception e)
+                        {
+                            e.printStackTrace();
                         }
                     });
                 }

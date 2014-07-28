@@ -27,7 +27,7 @@ import java.util.List;
  * correctly.
  *
  * @author pabercrombie
- * @version $Id: AllPointGraphics.java 560 2012-04-26 16:28:24Z pabercrombie $
+ * @version $Id: AllPointGraphics.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AllPointGraphics extends ApplicationTemplate
 {
@@ -67,7 +67,6 @@ public class AllPointGraphics extends ApplicationTemplate
             insertBeforePlacenames(wwd, this.tacgrpLayer);
             insertBeforePlacenames(wwd, this.metocLayer);
             insertBeforePlacenames(wwd, this.emsLayer);
-            this.getLayerPanel().update(this.getWwd());
 
             this.addGraphicControls();
 
@@ -381,7 +380,7 @@ public class AllPointGraphics extends ApplicationTemplate
             box.add(javax.swing.Box.createVerticalStrut(10));
             box.add(cb);
 
-            this.getLayerPanel().add(box, BorderLayout.SOUTH);
+            this.getControlPanel().add(box, BorderLayout.SOUTH);
         }
     }
 

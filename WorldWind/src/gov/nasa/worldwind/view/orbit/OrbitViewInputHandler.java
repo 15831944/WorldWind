@@ -19,7 +19,7 @@ import java.util.Date;
 
 /**
  * @author dcollins
- * @version $Id: OrbitViewInputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: OrbitViewInputHandler.java 2179 2014-07-25 21:43:39Z dcollins $
  */
 public class OrbitViewInputHandler extends BasicViewInputHandler
 {
@@ -93,10 +93,6 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
     //**************************************************************//
     //********************  View Change Events  ********************//
     //**************************************************************//
-    protected void onMoveTo(Position focalPosition, ViewInputAttributes.ActionAttributes actionAttribs)
-    {
-
-    }
 
     protected void onMoveTo(Position focalPosition, ViewInputAttributes.DeviceAttributes deviceAttributes,
         ViewInputAttributes.ActionAttributes actionAttribs)

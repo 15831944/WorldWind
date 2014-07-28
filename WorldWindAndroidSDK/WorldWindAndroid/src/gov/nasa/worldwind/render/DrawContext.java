@@ -22,7 +22,6 @@ import java.util.PriorityQueue;
  * @author dcollins
  * @version $Id: DrawContext.java 834 2012-10-08 22:25:55Z dcollins $
  */
-@SuppressWarnings("UnusedDeclaration")
 public class DrawContext extends WWObjectImpl
 {
     protected static class OrderedRenderableEntry implements Comparable<OrderedRenderableEntry>
@@ -49,7 +48,7 @@ public class DrawContext extends WWObjectImpl
 
     protected static final float DEFAULT_DEPTH_OFFSET_FACTOR = 1f;
     protected static final float DEFAULT_DEPTH_OFFSET_UNITS = 1f;
-    protected static final double DEFAULT_VERTICAL_EXAGGERATION = 1;
+    protected static final double DEFAULT_VERTICAL_EXAGGERATION = 1f;
 
     protected int viewportWidth;
     protected int viewportHeight;

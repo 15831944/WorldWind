@@ -198,13 +198,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return this.levels;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     protected int getExtremesLevel()
     {
         return extremesLevel;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     protected short[] getExtremes()
     {
         return extremes;
@@ -486,7 +484,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
             // This byte order assignment assumes the WW .BIL format. It will be generalized when the new server
             // setup is integrated.
-            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            byteBuffer.order(elevationDataByteOrder.equals(AVKey.LITTLE_ENDIAN) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
             ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
             short[] elevations = new short[shortBuffer.limit()];
             shortBuffer.get(elevations);
@@ -827,7 +825,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             }
         }
 
-        @SuppressWarnings("UnusedDeclaration")
         protected double[] getExtremes(Angle latitude, Angle longitude)
         {
             if (latitude == null || longitude == null)
@@ -1097,6 +1094,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         int i = (int) ((tileWidth - 1) * sLon);
         int k = j * tileWidth + i;
 
+        // @TODO 
+        if(elevations.length < k) return 0;
+        
         double eLeft = elevations[k];
         double eRight = i < (tileWidth - 1) ? elevations[k + 1] : eLeft;
 
@@ -1782,4 +1782,5 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         return params;
     }
+
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 /**
  * @author tag
- * @version $Id: AirspacesEverywhere.java 968 2012-12-06 02:52:49Z dcollins $
+ * @version $Id: AirspacesEverywhere.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class AirspacesEverywhere extends ApplicationTemplate
 {
@@ -84,7 +84,6 @@ public class AirspacesEverywhere extends ApplicationTemplate
             System.out.printf("%d Polygons, %d positions\n", count, positions.size());
 
             insertBeforeCompass(getWwd(), layer);
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

@@ -22,7 +22,7 @@ import java.util.*;
  * the most recent frame, and convey this information to the user.
  *
  * @author tag
- * @version $Id: DynamicLayerPanelDisplay.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: DynamicLayerPanelDisplay.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class DynamicLayerPanelDisplay
 {
@@ -39,7 +39,6 @@ public class DynamicLayerPanelDisplay
             super(wwd);
         }
 
-        @Override
         protected void fill(WorldWindow wwd)
         {
             if (this.checkBoxes == null)
@@ -52,11 +51,11 @@ public class DynamicLayerPanelDisplay
                 if (!(layer instanceof TiledImageLayer))
                     continue;
 
-                LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());
-                JCheckBox jcb = new JCheckBox(action);
-                jcb.setSelected(action.selected);
-                this.layersPanel.add(jcb);
-                this.checkBoxes.put(layer, jcb);
+//                LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());
+//                JCheckBox jcb = new JCheckBox(action);
+//                jcb.setSelected(action.selected);
+//                this.layersPanel.add(jcb);
+//                this.checkBoxes.put(layer, jcb);
             }
 
             this.updateLayerActivity(wwd);

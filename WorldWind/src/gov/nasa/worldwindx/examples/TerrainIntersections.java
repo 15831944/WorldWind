@@ -39,7 +39,7 @@ import java.util.concurrent.*;
  * and intersection calculations.s
  *
  * @author tag
- * @version $Id: TerrainIntersections.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: TerrainIntersections.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class TerrainIntersections extends ApplicationTemplate
 {
@@ -101,8 +101,6 @@ public class TerrainIntersections extends ApplicationTemplate
             this.sightLinesLayer = new RenderableLayer();
             this.sightLinesLayer.setName("Sight Lines");
             this.getWwd().getModel().getLayers().add(this.sightLinesLayer);
-
-            getLayerPanel().update(getWwd());
 
             // Set up a mouse handler to generate a grid and start intersection calculations when the user shift-clicks.
             this.getWwd().getInputHandler().addMouseListener(new MouseAdapter()

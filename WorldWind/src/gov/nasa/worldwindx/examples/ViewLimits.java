@@ -25,7 +25,7 @@ import java.io.File;
  * the view center position to stay within this box. The view can also be constrained by heading, pitch, and zoom.
  *
  * @author dcollins
- * @version $Id: ViewLimits.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: ViewLimits.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class ViewLimits extends ApplicationTemplate
 {
@@ -286,7 +286,7 @@ public class ViewLimits extends ApplicationTemplate
 
                 controlPanel.add(box, BorderLayout.NORTH);
             }
-            this.getLayerPanel().add(controlPanel, BorderLayout.SOUTH);
+            this.getControlPanel().add(controlPanel, BorderLayout.SOUTH);
 
             JMenuBar menuBar = new JMenuBar();
             {

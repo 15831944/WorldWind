@@ -499,6 +499,11 @@ public class Angle
         return Double.SIZE / 8;
     }
 
+	public double getDegrees()
+	{
+		return this.degrees;
+	}
+	
     /**
      * Obtains a <code>String</code> representation of this angle.
      *
@@ -509,4 +514,5 @@ public class Angle
     {
         return Double.toString(this.degrees) + '\u00B0';
     }
+
 }

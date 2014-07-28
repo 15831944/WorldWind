@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WeatherCamLayer.m 1999 2014-05-14 23:55:07Z tgaskins $
+ @version $Id: WeatherCamLayer.m 2032 2014-05-28 20:18:41Z tgaskins $
  */
 
 #import "WeatherCamLayer.h"
@@ -155,7 +155,7 @@
 - (void) refreshData
 {
     // Retrieve the data on a separate thread because it takes a while to download and parse.
-    NSString* urlString = @"http://worldwindserver.net/taiga/cameras/sites-update.xml";
+    NSString* urlString = [NSString stringWithFormat:@"http://%@/taiga/cameras/sites-update.xml", TAIGA_DATA_HOST];
     WeatherCamLayerRetriever* retriever = [[WeatherCamLayerRetriever alloc] initWithUrl:urlString layer:self];
 
     @synchronized (_refreshInProgress)

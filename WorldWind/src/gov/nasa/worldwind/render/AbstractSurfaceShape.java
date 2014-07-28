@@ -10,7 +10,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.measure.AreaMeasurer;
@@ -37,7 +37,7 @@ import java.util.List;
  * AbstractSurfaceObject's batch rendering capabilities.
  *
  * @author dcollins
- * @version $Id: AbstractSurfaceShape.java 1869 2014-03-14 23:03:14Z dcollins $
+ * @version $Id: AbstractSurfaceShape.java 2092 2014-06-25 00:15:50Z tgaskins $
  */
 public abstract class AbstractSurfaceShape extends AbstractSurfaceObject implements SurfaceShape, Movable
 {
@@ -948,6 +948,15 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      */
     protected LatLon intersectionWithMeridian(LatLon p1, LatLon p2, Angle meridian, Globe globe)
     {
+        if (globe instanceof Globe2D)
+        {
+            // A simple y = mx + b case.
+            double slope = (p2.latitude.degrees - p1.latitude.degrees) / (p2.longitude.degrees - p1.longitude.degrees);
+            double lat = p1.latitude.degrees + slope * (meridian.degrees - p1.longitude.degrees);
+
+            return LatLon.fromDegrees(lat, meridian.degrees);
+        }
+
         Vec4 pt1 = globe.computePointFromLocation(p1);
         Vec4 pt2 = globe.computePointFromLocation(p2);
 

@@ -315,4 +315,5 @@ public interface ElevationModel extends WWObject, Disposable
      *                                  buffer's length is less than numLat * numLon.
      */
     double getElevations(Sector sector, int numLat, int numLon, double targetResolution, double[] buffer);
+
 }

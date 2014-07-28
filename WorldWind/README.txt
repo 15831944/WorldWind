@@ -4,7 +4,7 @@
 # All Rights Reserved.
 #
 
-# $Id: README.txt 1978 2014-04-30 17:37:11Z tgaskins $
+# $Id: README.txt 2075 2014-06-22 19:49:25Z tgaskins $
 
 This document provides links on getting started with the World Wind Java SDK, provides instructions on running the a
 World Wind demo application, and outlines the key changes between each World Wind Java SDK release.
@@ -56,6 +56,15 @@ This will most likely be either NVIDIA, ATI or Intel. The drivers are typically 
 "Support". If your computer is a laptop, then updated drivers are probably at the laptop manufacturer's web site rather
 than the graphics card manufacturer's.
 
+
+New features and improvements in World Wind Java SDK 2.1.0
+------------------------------------------------------------
+- See http://goworldwind.org/releases/ for a description of this release's major features.
+
+- Repaired WWJ-521, LevelSet.getLastLevel not returning correct level for sector resolution limits.
+- Repaired WWJ-522, HighResolutionTerrain bulk intersector not notifying of exceptions. Added notification interface.
+- Added ability to retrieve elevations via WCS. Added WCSElevations example.
+- Modified CompoundElevationModel to sort elevation models from lowest resolution to highest when models are added.
 
 New features and improvements in World Wind Java SDK 2.0.0
 ------------------------------------------------------------

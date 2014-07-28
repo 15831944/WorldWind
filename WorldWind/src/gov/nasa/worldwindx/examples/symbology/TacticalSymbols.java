@@ -30,7 +30,7 @@ import java.awt.event.*;
  * See the {@link TacticalGraphics} for a detailed example of using World Wind tactical graphics in an application.
  *
  * @author dcollins
- * @version $Id: TacticalSymbols.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: TacticalSymbols.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class TacticalSymbols extends ApplicationTemplate
 {
@@ -111,9 +111,6 @@ public class TacticalSymbols extends ApplicationTemplate
 
             // Add the symbol layer to the World Wind model.
             this.getWwd().getModel().getLayers().add(symbolLayer);
-
-            // Update the layer panel to display the symbol layer.
-            this.getLayerPanel().update(this.getWwd());
 
             // Add a dragging controller to enable user click-and-drag control over tactical symbols.
             this.dragger = new BasicDragger(this.getWwd());
@@ -278,7 +275,7 @@ public class TacticalSymbols extends ApplicationTemplate
             box.add(Box.createVerticalStrut(10));
             box.add(cb);
 
-            this.getLayerPanel().add(box, BorderLayout.SOUTH);
+            this.getControlPanel().add(box, BorderLayout.SOUTH);
         }
     }
 

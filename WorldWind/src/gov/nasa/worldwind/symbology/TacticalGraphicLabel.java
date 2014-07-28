@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
@@ -26,7 +25,7 @@ import java.awt.geom.*;
  * The label will be drawn along a line connecting the label's position to the orientation position.
  *
  * @author pabercrombie
- * @version $Id: TacticalGraphicLabel.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: TacticalGraphicLabel.java 2146 2014-07-11 17:37:04Z tgaskins $
  */
 public class TacticalGraphicLabel implements OrderedRenderable
 {
@@ -852,7 +851,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
 
         // Don't draw if beyond the horizon.
         double horizon = dc.getView().getHorizonDistance();
-        if (this.eyeDistance > horizon)
+        if (!dc.is2DGlobe() && this.eyeDistance > horizon)
             return;
 
         if (this.intersectsFrustum(dc))

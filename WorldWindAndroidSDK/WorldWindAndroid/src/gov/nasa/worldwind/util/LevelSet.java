@@ -55,16 +55,16 @@ public class LevelSet extends WWObjectImpl
 
         Object o = params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (o == null || !(o instanceof LatLon))
-            sb.append(Logging.getMessage("term.tileDelta")).append(" ");
+            sb.append(Logging.getMessage("term.TileDelta")).append(" ");
 
         o = params.getValue(AVKey.SECTOR);
         if (o == null || !(o instanceof Sector))
-            sb.append(Logging.getMessage("term.sector")).append(" ");
+            sb.append(Logging.getMessage("term.Sector")).append(" ");
 
         int numLevels = 0;
         o = params.getValue(AVKey.NUM_LEVELS);
         if (o == null || !(o instanceof Integer) || (numLevels = (Integer) o) < 1)
-            sb.append(Logging.getMessage("term.numLevels")).append(" ");
+            sb.append(Logging.getMessage("term.NumLevels")).append(" ");
 
         int numEmptyLevels = 0;
         o = params.getValue(AVKey.NUM_EMPTY_LEVELS);
@@ -74,7 +74,7 @@ public class LevelSet extends WWObjectImpl
         String[] inactiveLevels = null;
         o = params.getValue(AVKey.INACTIVE_LEVELS);
         if (o != null && !(o instanceof String))
-            sb.append(Logging.getMessage("term.inactiveLevels")).append(" ");
+            sb.append(Logging.getMessage("term.InactiveLevels")).append(" ");
         else if (o != null)
             inactiveLevels = ((String) o).split(",");
 
@@ -82,7 +82,7 @@ public class LevelSet extends WWObjectImpl
         o = params.getValue(AVKey.SECTOR_RESOLUTION_LIMITS);
         if (o != null && !(o instanceof SectorResolution[]))
         {
-            sb.append(Logging.getMessage("term.sectorResolutionLimits")).append(" ");
+            sb.append(Logging.getMessage("term.SectorResolutionLimits")).append(" ");
         }
         else if (o != null)
         {

@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gov.nasa.worldwind.*;
@@ -26,7 +25,7 @@ import java.util.List;
 
 /**
  * @author dcollins
- * @version $Id: AbstractTacticalSymbol.java 1946 2014-04-18 18:44:59Z dcollins $
+ * @version $Id: AbstractTacticalSymbol.java 2146 2014-07-11 17:37:04Z tgaskins $
  */
 public abstract class AbstractTacticalSymbol extends WWObjectImpl implements TacticalSymbol, OrderedRenderable, Movable
 {
@@ -1034,7 +1033,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Don't draw if beyond the horizon.
             double horizon = dc.getView().getHorizonDistance();
-            if (this.eyeDistance > horizon)
+            if (!dc.is2DGlobe() && this.eyeDistance > horizon)
                 return;
 
             // If the symbol has never been laid out perform a frustum test using estimated screen bounds. If the symbol

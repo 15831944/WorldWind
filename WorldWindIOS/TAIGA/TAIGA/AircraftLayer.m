@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: AircraftLayer.m 1993 2014-05-14 18:04:40Z dcollins $
+ @version $Id: AircraftLayer.m 2167 2014-07-22 22:27:58Z dcollins $
  */
 
 #import "AircraftLayer.h"
@@ -15,21 +15,18 @@
 
 @implementation AircraftLayer
 
-- (AircraftLayer*) init
+- (id) init
 {
     self = [super init];
 
     [self setDisplayName:@"Aircraft"];
     [self setEnabled:NO]; // disable the aircraft shape until we have a valid aircraft position
+    [self setPickEnabled:NO];
 
     aircraftShape = [self createAircraftShape];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(aircraftPositionDidChange:)
                                                  name:TAIGA_CURRENT_AIRCRAFT_POSITION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(simulationWillBegin:)
-                                                 name:TAIGA_SIMULATION_WILL_BEGIN object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(simulationWillEnd:)
-                                                 name:TAIGA_SIMULATION_WILL_END object:nil];
 
     return self;
 }
@@ -67,20 +64,6 @@
 
     CLLocation* location = [notification object];
     [self updateAircraftShape:aircraftShape withLocation:location];
-    [WorldWindView requestRedraw];
-}
-
-- (void) simulationWillBegin:(NSNotification*)notification
-{
-    simulatedFlightRoute = [notification object];
-    [self setEnabled:NO]; // disable this layer until we have a new fix on the current location
-    [WorldWindView requestRedraw];
-}
-
-- (void) simulationWillEnd:(NSNotification*)notification
-{
-    simulatedFlightRoute = nil;
-    [self setEnabled:NO]; // disable this layer until we have a new fix on the current location
     [WorldWindView requestRedraw];
 }
 

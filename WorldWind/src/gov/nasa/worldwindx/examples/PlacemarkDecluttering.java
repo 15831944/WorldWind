@@ -17,7 +17,7 @@ import java.awt.*;
 
 /**
  * @author tag
- * @version $Id: PlacemarkDecluttering.java 726 2012-08-29 03:16:03Z tgaskins $
+ * @version $Id: PlacemarkDecluttering.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class PlacemarkDecluttering extends ApplicationTemplate
 {
@@ -174,9 +174,6 @@ public class PlacemarkDecluttering extends ApplicationTemplate
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
-
-            // Update layer panel
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

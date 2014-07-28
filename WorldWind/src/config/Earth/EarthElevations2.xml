@@ -5,7 +5,7 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id: EarthElevations2.xml 1958 2014-04-24 19:25:37Z tgaskins $-->
+<!--$Id: EarthElevations2.xml 2180 2014-07-25 22:35:46Z dcollins $-->
 <ElevationModel version="1" modelType="Compound">
     <ElevationModel version="1">
         <DisplayName>USA 10m, World 30m, Ocean 900m</DisplayName>
@@ -22,7 +22,7 @@
         <DataType type="Int16" byteOrder="LittleEndian"/>
         <DataDetailHint>0.20</DataDetailHint>
         <FormatSuffix>.bil</FormatSuffix>
-        <ExtremeElevations min="-11000" max="8850">
+        <ExtremeElevations min="-14380" max="8850">
             <FileName>config/SRTM30Plus_ExtremeElevations_5.bil</FileName>
         </ExtremeElevations>
         <NumLevels count="12" numEmpty="0"/>

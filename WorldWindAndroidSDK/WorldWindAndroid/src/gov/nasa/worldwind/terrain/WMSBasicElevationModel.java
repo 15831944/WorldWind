@@ -11,6 +11,8 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 
+import android.util.Log;
+
 import java.net.*;
 
 /**
@@ -35,6 +37,12 @@ public class WMSBasicElevationModel extends BasicElevationModel
 //        this(wmsGetParamsFromCapsDoc(caps, params));
 //    }
 
+    public static AVList tileUrlBuilder(AVList params)
+    {
+        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WMS_VERSION), params));
+        return params;
+    }
+    
     protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params)
     {
         if (domElement == null)
@@ -142,8 +150,8 @@ public class WMSBasicElevationModel extends BasicElevationModel
                     sb.append(altImageFormat);
                 if (this.bgColor != null)
                 {
-                    sb.append("&bgColor=");
-                    sb.append(this.bgColor);
+              //      sb.append("&bgColor=");
+                //    sb.append(this.bgColor);
                 }
 
                 this.URLTemplate = sb.toString();
@@ -169,6 +177,7 @@ public class WMSBasicElevationModel extends BasicElevationModel
             sb.append(s.maxLatitude.degrees);
             sb.append("&"); // terminate the query string
 
+            Log.i("",sb.toString());
             return new java.net.URL(sb.toString().replace(" ", "%20"));
         }
     }

@@ -50,7 +50,7 @@ import java.util.*;
  * {@link GpuResourceCache#get(Object)} and {@link GpuResourceCache#getTexture(Object)}.
  *
  * @author Tom Gaskins
- * @version $Id: WorldWindowGLJPanel.java 1855 2014-02-28 23:01:02Z tgaskins $
+ * @version $Id: WorldWindowGLJPanel.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
 public class WorldWindowGLJPanel extends GLJPanel implements WorldWindow, PropertyChangeListener
 {
@@ -171,6 +171,18 @@ public class WorldWindowGLJPanel extends GLJPanel implements WorldWindow, Proper
     {
         WorldWind.removePropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
         this.wwd.shutdown();
+    }
+
+    @Override
+    public boolean isEnableGpuCacheReinitialization()
+    {
+        return this.wwd.isEnableGpuCacheReinitialization();
+    }
+
+    @Override
+    public void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization)
+    {
+        this.wwd.setEnableGpuCacheReinitialization(enableGpuCacheReinitialization);
     }
 
     /** Constructs and attaches the {@link View} for this <code>WorldWindow</code>. */

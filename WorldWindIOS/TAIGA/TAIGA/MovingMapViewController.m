@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: MovingMapViewController.m 1998 2014-05-14 19:36:31Z tgaskins $
+ @version $Id: MovingMapViewController.m 2175 2014-07-24 20:46:05Z tgaskins $
  */
 
 #import "MovingMapViewController.h"
@@ -44,6 +44,7 @@
 #import "ViewSelectionController.h"
 #import "TerrainProfileController.h"
 #import "AircraftLayer.h"
+#import "AircraftTrackLayer.h"
 #import "TerrainAltitudeLayer.h"
 #import "LocationTrackingViewController.h"
 #import "WWDAFIFLayer.h"
@@ -53,6 +54,9 @@
 #import "UIPopoverController+TAIGAAdditions.h"
 #import "FAASectionalsLayer.h"
 #import "DAFIFLayer.h"
+#import "SUALayer.h"
+#import "SUADataViewController.h"
+#import "DataBarViewController.h"
 
 @implementation MovingMapViewController
 {
@@ -69,6 +73,7 @@
     BOOL isShowRouteView;
 
     UIToolbar* topToolBar;
+    DataBarViewController* dataBar;
     UIBarButtonItem* connectivityButton;
     UIBarButtonItem* overlaysButton;
     UIBarButtonItem* quickViewsButton;
@@ -95,6 +100,7 @@
 
     WaypointLayer* waypointLayer;
     AircraftLayer* aircraftLayer;
+    AircraftTrackLayer* aircraftTrackLayer;
     WWRenderableLayer* flightRouteLayer;
     FAASectionalsLayer* faaChartsLayer;
     TerrainAltitudeLayer* terrainAltitudeLayer;
@@ -103,6 +109,7 @@
     WeatherCamLayer* weatherCamLayer;
     CompassLayer* compassLayer;
     WWDAFIFLayer* dafifLayer;
+    SUALayer* suaLayer;
 
     UITapGestureRecognizer* tapGestureRecognizer;
     METARDataViewController* metarDataViewController;
@@ -111,6 +118,8 @@
     UIPopoverController* pirepDataPopoverController;
     WeatherCamViewController* weatherCamViewController;
     UIPopoverController* weatherCamPopoverController;
+    SUADataViewController* suaDataViewController;
+    UIPopoverController* suaDataPopoverController;
     AddWaypointPopoverController* addWaypointPopoverController;
     EditWaypointPopoverController* editWaypointPopoverController;
 }
@@ -124,6 +133,7 @@
     metarDataViewController = [[METARDataViewController alloc] init];
     pirepDataViewController = [[PIREPDataViewController alloc] init];
     weatherCamViewController = [[WeatherCamViewController alloc] init];
+    suaDataViewController = [[SUADataViewController alloc] init];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationTrackingChanged:)
                                                  name:TAIGA_LOCATION_TRACKING_ENABLED object:nil];
@@ -205,6 +215,7 @@
 
     [self createWorldWindView];
     [self createTopToolbar];
+    [self createDataBar];
     [self createChartsController];
     [self createRouteViewController];
     [self createSimulationController];
@@ -327,6 +338,12 @@
             [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@", [waypointLayer displayName]] defaultValue:NO]];
     [layers addLayer:waypointLayer];
 
+    aircraftTrackLayer = [[AircraftTrackLayer alloc] init];
+    [aircraftTrackLayer setEnabled:[Settings                                 getBoolForName:
+            [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@",
+                                             [aircraftTrackLayer displayName]] defaultValue:YES]];
+    [layers addLayer:aircraftTrackLayer];
+
     aircraftLayer = [[AircraftLayer alloc] init];
     [[aircraftLayer userTags] setObject:@"" forKey:TAIGA_HIDDEN_LAYER];
     [layers addLayer:aircraftLayer];
@@ -351,6 +368,11 @@
     [dafifLayer setEnabled:[Settings                                                                               getBoolForName:
             [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@", [dafifLayer displayName]] defaultValue:YES]];
     [[[_wwv sceneController] layers] addLayer:dafifLayer];
+
+    suaLayer = [[SUALayer alloc] init];
+    [suaLayer setEnabled:[Settings                                                                               getBoolForName:
+            [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@", [suaLayer displayName]] defaultValue:YES]];
+    [[[_wwv sceneController] layers] addLayer:suaLayer];
 
     [self createTerrainAltitudeLayer];
     [terrainAltitudeLayer setEnabled:[Settings                                                                               getBoolForName:
@@ -623,6 +645,16 @@
     [self.view addSubview:[locationTrackingViewController view]];
 }
 
+- (void) createDataBar
+{
+    CGRect frm = CGRectMake(0, self.view.frame.size.height - TAIGA_TOOLBAR_HEIGHT,
+            self.view.frame.size.width, TAIGA_TOOLBAR_HEIGHT);
+    dataBar = [[DataBarViewController alloc] initWithFrame:frm];
+
+    [self.view addSubview:[dataBar view]];
+    [self addChildViewController:dataBar];
+}
+
 - (void) createTopToolbar
 {
     topToolBar = [[UIToolbar alloc] init];
@@ -630,6 +662,8 @@
     [topToolBar setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [topToolBar setBarStyle:UIBarStyleBlack];
     [topToolBar setTranslucent:NO];
+
+    [topToolBar setBackgroundColor:[UIColor clearColor]];
 
     CGSize size = CGSizeMake(140, TAIGA_TOOLBAR_HEIGHT);
 
@@ -859,6 +893,10 @@
                     [self showWeatherCam:pm];
             }
         }
+        else if ([[[topObject parentLayer] displayName] isEqualToString:@"Airspaces"])
+        {
+            [self showSpecialUseAirspace:topObject];
+        }
         else if ([[topObject userObject] isKindOfClass:[Waypoint class]])
         {
             [self showAddWaypoint:topObject];
@@ -945,6 +983,22 @@
                                    permittedArrowDirections:0 animated:YES];
 }
 
+- (void) showSpecialUseAirspace:(WWPickedObject*)po
+{
+    // Give the controller the airspace's dictionary.
+    [suaDataViewController setEntries:[[po userObject] userObject]];
+
+    // Ensure that the first line of the data is at the top of the data table.
+    [[suaDataViewController tableView] scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
+                                               atScrollPosition:UITableViewScrollPositionTop animated:YES];
+
+    if (suaDataPopoverController == nil)
+        suaDataPopoverController = [[UIPopoverController alloc] initWithContentViewController:suaDataViewController];
+    [suaDataPopoverController presentPopoverFromPoint:[po pickPoint] inView:_wwv
+                             permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [suaDataViewController flashScrollIndicator];
+}
+
 - (void) selectFlightRoute:(WWPickedObject*)po
 {
     FlightRoute* flightRoute = [[po userObject] objectForKey:@"flightRoute"];
@@ -961,8 +1015,8 @@
 
 - (void) gpsQualityNotification:(NSNotification*)notification
 {
-    CLLocation* location = (CLLocation*) [notification object];
-    [self showNoGPSSign:trackingLocation && ([notification object] == nil || [location horizontalAccuracy] < 0)];
+    NSNumber* quality = (NSNumber*) [notification object];
+    [self showNoGPSSign:[notification object] == nil || [quality doubleValue] <= 0];
 }
 
 - (void) showNoGPSSign:(bool)yn

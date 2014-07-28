@@ -888,6 +888,26 @@ public class Sector implements Iterable<LatLon>
         result = 29 * result + this.maxLongitude.hashCode();
         return result;
     }
+    
+	public Angle getMinLongitude()
+	{
+		return minLongitude;
+	}
+
+	public Angle getMinLatitude()
+	{
+		return minLatitude;
+	}
+
+	public Angle getMaxLongitude()
+	{
+		return maxLongitude;
+	}
+
+	public Angle getMaxLatitude()
+	{
+		return maxLatitude;
+	}
 
     /**
      * Returns a string indicating the sector's angles.

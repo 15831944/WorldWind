@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: RenderableLayerDetailController.m 1999 2014-05-14 23:55:07Z tgaskins $
+ @version $Id: RenderableLayerDetailController.m 2043 2014-05-29 23:08:44Z tgaskins $
  */
 
 #import "RenderableLayerDetailController.h"
@@ -48,7 +48,7 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView*)tableView
 {
-    return 2;
+    return 1; // See TAIGA-95, Remove ability to turn on/off individual elements
 }
 
 - (NSInteger) tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section

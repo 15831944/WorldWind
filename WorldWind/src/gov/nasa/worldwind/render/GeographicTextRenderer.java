@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.render;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -23,7 +22,7 @@ import java.util.*;
 
 /**
  * @author dcollins
- * @version $Id: GeographicTextRenderer.java 1181 2013-02-15 22:27:10Z dcollins $
+ * @version $Id: GeographicTextRenderer.java 2146 2014-07-11 17:37:04Z tgaskins $
  */
 public class GeographicTextRenderer
 {
@@ -258,7 +257,7 @@ public class GeographicTextRenderer
                 continue;
 
             double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
-            if (eyeDistance > horizon)
+            if (!dc.is2DGlobe() && eyeDistance > horizon)
                 continue;
 
             if (!frustumInModelCoords.contains(textPoint))
@@ -312,7 +311,7 @@ public class GeographicTextRenderer
 
         double horizon = dc.getView().getHorizonDistance();
         double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
-        if (eyeDistance > horizon)
+        if (!dc.is2DGlobe() && eyeDistance > horizon)
             return;
 
         if (!dc.getView().getFrustumInModelCoordinates().contains(textPoint))

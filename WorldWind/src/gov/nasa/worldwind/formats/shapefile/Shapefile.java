@@ -86,7 +86,7 @@ import java.util.logging.Level;
  * Shapefile's point coordinates are interpreted according to its coordinate system.
  *
  * @author Patrick Murris
- * @version $Id: Shapefile.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: Shapefile.java 2068 2014-06-20 21:33:09Z dcollins $
  */
 public class Shapefile extends AVListImpl implements Closeable, Exportable
 {
@@ -433,6 +433,27 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
     public CompoundVecBuffer getPointBuffer()
     {
         return this.pointBuffer;
+    }
+
+    /**
+     * Returns a set of the unique attribute names associated with this shapefile's records, or null if this shapefile
+     * has no associated attributes.
+     *
+     * @return a set containing the unique attribute names of this shapefile's records, or null if there are no
+     *         attributes.
+     */
+    public Set<String> getAttributeNames()
+    {
+        if (this.attributeFile == null)
+            return null;
+
+        HashSet<String> set = new HashSet<String>();
+        for (DBaseField field : this.attributeFile.getFields())
+        {
+            set.add(field.getName());
+        }
+
+        return set;
     }
 
     /**

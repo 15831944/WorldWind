@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.layers;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
@@ -27,7 +26,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * @author tag
- * @version $Id: TiledImageLayer.java 1824 2014-01-22 22:41:10Z dcollins $
+ * @version $Id: TiledImageLayer.java 2053 2014-06-10 20:16:57Z tgaskins $
  */
 public abstract class TiledImageLayer extends AbstractLayer
 {

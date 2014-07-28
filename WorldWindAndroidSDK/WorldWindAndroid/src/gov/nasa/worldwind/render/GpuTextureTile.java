@@ -215,7 +215,6 @@ public class GpuTextureTile extends Tile implements SurfaceTile
         return GpuTexture.createTexture(dc, textureData);
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
     protected void applyFallbackTransform(DrawContext dc, Matrix matrix)
     {
         int deltaLevel = this.getLevelNumber() - this.fallbackTile.getLevelNumber();

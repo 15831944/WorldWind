@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppUpdateController.m 1625 2013-09-20 20:11:57Z tgaskins $
+ @version $Id: AppUpdateController.m 2171 2014-07-24 19:05:29Z tgaskins $
  */
 
 #import "AppUpdateController.h"
@@ -52,9 +52,10 @@
 
 - (void) startUpdateCheck
 {
-    dispatch_async(dispatch_get_main_queue(), ^
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^
     {
-        NSURL* url = [[NSURL alloc] initWithString:@"http://worldwindserver.net/taiga/install/taigaversion.txt"];
+        NSString* location = [NSString stringWithFormat:@"http://%@/taiga/install/taigaversion.txt", TAIGA_DATA_HOST];
+        NSURL* url = [[NSURL alloc] initWithString:location];
         WWRetriever* retriever = [[WWRetriever alloc] initWithUrl:url timeout:10
                                                     finishedBlock:^(WWRetriever* myRetriever)
                                                     {

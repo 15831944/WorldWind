@@ -17,7 +17,7 @@ import gov.nasa.worldwind.util.tree.*;
  * expand and collapse. The frame should not show scroll bars.
  *
  * @author pabercrombie
- * @version $Id: TreeNativeSize.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: TreeNativeSize.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class TreeNativeSize extends ApplicationTemplate
 {
@@ -75,9 +75,6 @@ public class TreeNativeSize extends ApplicationTemplate
 
             // Add the layer to the model.
             insertBeforeCompass(this.getWwd(), layer);
-
-            // Update layer panel
-            this.getLayerPanel().update(this.getWwd());
         }
     }
 

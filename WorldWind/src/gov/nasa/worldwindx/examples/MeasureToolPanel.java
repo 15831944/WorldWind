@@ -23,7 +23,7 @@ import java.util.ArrayList;
 * Control panel for the MeasureTool.
 *
 * @author Patrick Murris
-* @version $Id: MeasureToolPanel.java 1171 2013-02-11 21:45:02Z dcollins $
+* @version $Id: MeasureToolPanel.java 2105 2014-06-28 19:28:59Z tgaskins $
 * @see gov.nasa.worldwind.util.measure.MeasureTool
 */
 @SuppressWarnings("unchecked")
@@ -133,12 +133,17 @@ public class MeasureToolPanel extends JPanel
         JPanel shapePanel = new JPanel(new GridLayout(1, 2, 5, 5));
         shapePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         shapePanel.add(new JLabel("Shape:"));
-        shapeCombo = new JComboBox(new String[] {"Line", "Path", "Polygon", "Circle", "Ellipse", "Square", "Rectangle"});
+        shapeCombo = new JComboBox(new String[]
+            {"Surface Line", "Surface Path", "Line", "Path", "Polygon", "Circle", "Ellipse", "Square", "Rectangle"});
         shapeCombo.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent event)
             {
                 String item = (String)((JComboBox)event.getSource()).getSelectedItem();
+                if (item.equals("Surface Line") )
+                    measureTool.setMeasureShapeType(MeasureTool.SHAPE_SURFACE_LINE);
+                else if (item.equals("Surface Path"))
+                    measureTool.setMeasureShapeType(MeasureTool.SHAPE_SURFACE_PATH);
                 if (item.equals("Line") )
                     measureTool.setMeasureShapeType(MeasureTool.SHAPE_LINE);
                 else if (item.equals("Path"))

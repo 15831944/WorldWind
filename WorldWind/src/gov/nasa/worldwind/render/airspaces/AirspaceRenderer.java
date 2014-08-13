@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 /**
  * @author dcollins
- * @version $Id: AirspaceRenderer.java 1847 2014-02-18 00:32:16Z dcollins $
+ * @version $Id: AirspaceRenderer.java 2210 2014-08-08 22:06:02Z tgaskins $
  */
 public class AirspaceRenderer
 {
@@ -551,10 +551,9 @@ public class AirspaceRenderer
             if (this != oa.getRenderer())
                 return;
 
+            dc.pollOrderedRenderables();
             this.drawAirspace(dc, oa.getAirspace(), oa.getPickedObject(), pickSupport);
 
-            // Take the ordered airspace off the queue, then peek at the next item in the queue (but do not remove it).
-            dc.pollOrderedRenderables();
             top = dc.peekOrderedRenderables();
         }
     }

@@ -14,7 +14,7 @@ import java.awt.*;
 
 /**
  * @author Patrick Murris
- * @version $Id: BasicDragger.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: BasicDragger.java 2221 2014-08-12 20:03:29Z tgaskins $
  */
 public class BasicDragger implements SelectListener
 {

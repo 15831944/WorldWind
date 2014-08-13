@@ -12,6 +12,8 @@ import gov.nasa.worldwind.wms.CapabilitiesRequest;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+
 import java.net.*;
 import java.util.concurrent.*;
 
@@ -248,19 +250,25 @@ public class DataConfigurationUtils
         WWXML.checkAndSetIntegerParam(domElement, params, AVKey.NUM_EMPTY_LEVELS, "NumLevels/@numEmpty", xpath);
         WWXML.checkAndSetStringParam(domElement, params, AVKey.INACTIVE_LEVELS, "NumLevels/@inactive", xpath);
         WWXML.checkAndSetSectorParam(domElement, params, AVKey.SECTOR, "Sector", xpath);
-        WWXML.checkAndSetSectorResolutionParam(domElement, params, AVKey.SECTOR_RESOLUTION_LIMITS,
-                "SectorResolutionLimit", xpath);
+        WWXML.checkAndSetSectorResolutionParam(domElement, params, AVKey.SECTOR_RESOLUTION_LIMITS, "SectorResolutionLimit", xpath);
+        
+        // Optional DataDetailHint (Layer configuration files)
+        try
+        {
+            String ddh = xpath.evaluate("DataDetailHint", domElement);
+            if (ddh != null && ddh.length() > 0)
+                params.setValue(AVKey.DETAIL_HINT, Double.parseDouble(ddh));
+        }
+        catch (XPathExpressionException e) { }
+     
         WWXML.checkAndSetLatLonParam(domElement, params, AVKey.TILE_ORIGIN, "TileOrigin/LatLon", xpath);
         WWXML.checkAndSetIntegerParam(domElement, params, AVKey.TILE_WIDTH, "TileSize/Dimension/@width", xpath);
         WWXML.checkAndSetIntegerParam(domElement, params, AVKey.TILE_HEIGHT, "TileSize/Dimension/@height", xpath);
-        WWXML.checkAndSetLatLonParam(domElement, params, AVKey.LEVEL_ZERO_TILE_DELTA, "LevelZeroTileDelta/LatLon",
-                xpath);
+        WWXML.checkAndSetLatLonParam(domElement, params, AVKey.LEVEL_ZERO_TILE_DELTA, "LevelZeroTileDelta/LatLon", xpath);
 
         // Retrieval properties.
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS,
-                "AbsentTiles/MaxAttempts", xpath);
-        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL,
-                "AbsentTiles/MinCheckInterval/Time", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS, "AbsentTiles/MaxAttempts", xpath);
+        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL, "AbsentTiles/MinCheckInterval/Time", xpath);
 
         return params;
     }

@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * Using the EarthFlat and FlatOrbitView to display USGS latest earthquakes rss feed.
  *
  * @author Patrick Murris
- * @version $Id: FlatWorldEarthquakes.java 2109 2014-06-30 16:52:38Z tgaskins $
+ * @version $Id: FlatWorldEarthquakes.java 2219 2014-08-11 21:39:44Z dcollins $
  */
 public class FlatWorldEarthquakes extends ApplicationTemplate
 {
@@ -62,19 +62,6 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
         public AppFrame()
         {
             super(true, true, false);
-
-            // Change atmosphere SkyGradientLayer for SkyColorLayer
-            // and set worldmap and compass max active altitude
-            LayerList layers = this.getWwd().getModel().getLayers();
-            for (int i = 0; i < layers.size(); i++)
-            {
-                if (layers.get(i) instanceof SkyGradientLayer)
-                    layers.set(i, new SkyColorLayer());
-                else if (layers.get(i) instanceof WorldMapLayer)
-                    (layers.get(i)).setMaxActiveAltitude(20e6);
-                else if (layers.get(i) instanceof CompassLayer)
-                    (layers.get(i)).setMaxActiveAltitude(20e6);
-            }
 
             // Init tooltip annotation
             this.tooltipAnnotation = new GlobeAnnotation("", Position.fromDegrees(0, 0, 0));
@@ -622,7 +609,6 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, 0);
         Configuration.setValue(AVKey.INITIAL_ALTITUDE, 50e6);
         Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
-        Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
         ApplicationTemplate.start("World Wind USGS Earthquakes M 2.5+ - 7 days", AppFrame.class);
     }
 }

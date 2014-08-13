@@ -199,7 +199,7 @@ public class WMSBasicElevationModel extends BasicElevationModel
      * @param caps                  the WMS Capabilities source to parse for WMSBasicElevationModel configuration
      *                              parameters.
      * @param formatOrderPreference an ordered array of preferred image formats, or null to use the default format.
-     * @param params                the output key-value pairs which recieve the WMSBasicElevationModel configuration
+     * @param params                the output key-value pairs which receive the WMSBasicElevationModel configuration
      *                              parameters.
      *
      * @return a reference to params.

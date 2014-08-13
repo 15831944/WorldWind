@@ -32,7 +32,7 @@ import java.io.*;
  * draw context, is made current. Subsequently called methods rely on the existence of this current data cache entry.
  *
  * @author tag
- * @version $Id: AbstractShape.java 2153 2014-07-17 17:33:13Z tgaskins $
+ * @version $Id: AbstractShape.java 2214 2014-08-09 20:05:09Z tgaskins $
  */
 public abstract class AbstractShape extends WWObjectImpl
     implements Highlightable, OrderedRenderable, Movable, ExtentHolder, GeographicExtent, Exportable, Restorable,
@@ -342,6 +342,7 @@ public abstract class AbstractShape extends WWObjectImpl
     {
         this.shapeDataCache.removeAllEntries();
         this.sector = null;
+        this.surfaceShape = null;
     }
 
     /**

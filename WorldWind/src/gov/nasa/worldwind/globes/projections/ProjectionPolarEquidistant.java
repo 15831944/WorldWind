@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.Logging;
  * Defines a polar equidistant projection centered on a specified pole.
  *
  * @author tag
- * @version $Id: ProjectionPolarEquidistant.java 2177 2014-07-25 16:38:24Z dcollins $
+ * @version $Id: ProjectionPolarEquidistant.java 2211 2014-08-08 22:48:14Z dcollins $
  */
 public class ProjectionPolarEquidistant implements GeographicProjection
 {
@@ -98,10 +98,26 @@ public class ProjectionPolarEquidistant implements GeographicProjection
             return Position.fromDegrees((this.pole == SOUTH ? -90 : 90), 0, cart.z);
 
         double c = rho / globe.getRadius();
+        if (c > Math.PI) // map cartesian points beyond the projections radius to the edge of the projection
+            c = Math.PI;
+
         double lat = Math.asin(Math.cos(c) * (this.pole == SOUTH ? -1 : 1));
         double lon = Math.atan2(cart.x, cart.y * (this.pole == SOUTH ? 1 : -1)); // use atan2(x,y) instead of atan(x/y)
 
         return Position.fromRadians(lat, lon, cart.z);
+    }
+
+    @Override
+    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude)
+    {
+        // The north pointing tangent depends on the pole. With the south pole, the north pointing tangent points in the
+        // same direction as the vector returned by cartesianToGeographic. With the north pole, the north pointing
+        // tangent has the opposite direction.
+
+        double x = Math.sin(longitude.radians) * (this.pole == SOUTH ? 1 : -1);
+        double y = Math.cos(longitude.radians);
+
+        return new Vec4(x, y, 0);
     }
 
     @Override

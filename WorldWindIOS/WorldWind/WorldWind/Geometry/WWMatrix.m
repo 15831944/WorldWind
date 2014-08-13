@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: WWMatrix.m 1502 2013-07-11 18:21:44Z dcollins $
+ @version $Id: WWMatrix.m 2205 2014-08-07 23:41:31Z dcollins $
  */
 
 #import "WorldWind/Geometry/WWMatrix.h"
@@ -803,7 +803,7 @@ void WWMatrixSwapEigenvalues(double* a, double* b, int* ia, int* ib)
     [modelviewLocal multiplyByLocalCoordinateTransform:origin onGlobe:globe];
 
     // Extract the viewing parameters from the transform in local coordinates.
-    // TODO: Document how these parameters are extracted.
+    // TODO: Document how these parameters are extracted. See Matrix.extractViewingParameters in WWJ.
 
     double* ml = modelviewLocal->m;
     double range = -ml[11];

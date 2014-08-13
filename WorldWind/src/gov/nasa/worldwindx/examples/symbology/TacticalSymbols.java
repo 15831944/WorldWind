@@ -30,7 +30,7 @@ import java.awt.event.*;
  * See the {@link TacticalGraphics} for a detailed example of using World Wind tactical graphics in an application.
  *
  * @author dcollins
- * @version $Id: TacticalSymbols.java 2109 2014-06-30 16:52:38Z tgaskins $
+ * @version $Id: TacticalSymbols.java 2196 2014-08-06 19:42:15Z tgaskins $
  */
 public class TacticalSymbols extends ApplicationTemplate
 {
@@ -53,8 +53,10 @@ public class TacticalSymbols extends ApplicationTemplate
             // attribute bundles are reflected in all symbols. We specify both attribute bundle types in this example in
             // order to keep a symbol's scale constant when it's highlighted, and change only its opacity.
             this.sharedAttrs = new BasicTacticalSymbolAttributes();
+            this.sharedAttrs.setTextModifierMaterial(Material.RED);
             this.sharedHighlightAttrs = new BasicTacticalSymbolAttributes();
             this.sharedHighlightAttrs.setInteriorMaterial(Material.WHITE);
+            this.sharedHighlightAttrs.setTextModifierMaterial(Material.WHITE);
             this.sharedHighlightAttrs.setOpacity(1.0);
 
             // Create an air tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
@@ -108,6 +110,19 @@ public class TacticalSymbols extends ApplicationTemplate
             machineGunSymbol.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
             machineGunSymbol.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
             this.symbolLayer.addRenderable(machineGunSymbol);
+
+            // Add the same symbol at the dateline to test that all aspects display correctly there.
+            TacticalSymbol machineGunSymbolAtDateline = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
+                Position.fromDegrees(32.3902, 180, 0));
+            machineGunSymbolAtDateline.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun at Dateline");
+            machineGunSymbolAtDateline.setAttributes(this.sharedAttrs);
+            machineGunSymbolAtDateline.setHighlightAttributes(this.sharedHighlightAttrs);
+            machineGunSymbolAtDateline.setModifier(SymbologyConstants.QUANTITY, 200);
+            machineGunSymbolAtDateline.setModifier(SymbologyConstants.STAFF_COMMENTS, "FOR REINFORCEMENTS");
+            machineGunSymbolAtDateline.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "ADDED SUPPORT FOR JJ");
+            machineGunSymbolAtDateline.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
+            machineGunSymbolAtDateline.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
+            this.symbolLayer.addRenderable(machineGunSymbolAtDateline);
 
             // Add the symbol layer to the World Wind model.
             this.getWwd().getModel().getLayers().add(symbolLayer);

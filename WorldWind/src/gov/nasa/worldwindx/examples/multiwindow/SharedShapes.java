@@ -19,7 +19,6 @@ import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.airspaces.Box;
 import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.view.orbit.FlatOrbitView;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 
 import javax.swing.*;
@@ -45,7 +44,7 @@ import java.util.Arrays;
  * layers that cannot be shared.
  *
  * @author dcollins
- * @version $Id: SharedShapes.java 1853 2014-02-28 19:28:23Z tgaskins $
+ * @version $Id: SharedShapes.java 2219 2014-08-11 21:39:44Z dcollins $
  */
 public class SharedShapes
 {
@@ -269,7 +268,6 @@ public class SharedShapes
 
         // Make the second World Window and tell it to share OpenGL resources with the first World Window.
         WWPanel panelB = new WWPanel(panelA.getWwd(), modelForWindowB, new Dimension(900, 900));
-        panelB.getWwd().setView(new FlatOrbitView());
         box.add(javax.swing.Box.createHorizontalStrut(5));
         box.add(panelB);
         appFrame.pack();

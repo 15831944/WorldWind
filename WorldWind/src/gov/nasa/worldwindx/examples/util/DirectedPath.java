@@ -24,7 +24,7 @@ import java.util.List;
  * arrowhead, in which the arrowhead is not drawn.
  *
  * @author pabercrombie
- * @version $Id: DirectedPath.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: DirectedPath.java 2184 2014-07-29 20:14:31Z tgaskins $
  */
 public class DirectedPath extends Path
 {
@@ -170,7 +170,7 @@ public class DirectedPath extends Path
     {
         if (arrowAngle == null)
         {
-            String message = Logging.getMessage("nullValue.AngleIsNull", arrowAngle);
+            String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }

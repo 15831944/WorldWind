@@ -19,7 +19,7 @@ import java.util.*;
 
 /**
  * @author dcollins
- * @version $Id: SurfacePolygon.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: SurfacePolygon.java 2221 2014-08-12 20:03:29Z tgaskins $
  */
 public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 {

@@ -11,7 +11,7 @@ import gov.nasa.worldwind.globes.*;
 
 /**
  * @author tag
- * @version $Id: ProjectionMercator.java 2083 2014-06-24 00:28:47Z tgaskins $
+ * @version $Id: ProjectionMercator.java 2211 2014-08-08 22:48:14Z dcollins $
  */
 public class ProjectionMercator implements GeographicProjection
 {
@@ -51,5 +51,11 @@ public class ProjectionMercator implements GeographicProjection
             Math.atan(Math.sinh(cart.y / globe.getEquatorialRadius())),
             (cart.x - xOffset) / globe.getEquatorialRadius(),
             cart.z);
+    }
+
+    @Override
+    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude)
+    {
+        return Vec4.UNIT_Y;
     }
 }

@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * @author dcollins
- * @version $Id: KeyEventState.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: KeyEventState.java 2193 2014-08-01 23:33:16Z dcollins $
  */
 public class KeyEventState implements KeyListener, MouseListener
 {
@@ -58,6 +58,12 @@ public class KeyEventState implements KeyListener, MouseListener
     {
         InputState state = this.getKeyState(keyCode);
         return state != null && state.getEventType() == KeyEvent.KEY_PRESSED;
+    }
+
+    public int keyState(int keyCode)
+    {
+        InputState state = this.getKeyState(keyCode);
+        return state != null && state.getEventType() == KeyEvent.KEY_PRESSED ? 1 : 0;
     }
 
     public int getNumKeysDown()

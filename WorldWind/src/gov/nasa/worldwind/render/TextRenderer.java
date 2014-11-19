@@ -43,7 +43,7 @@
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 /**
- * @version $Id: TextRenderer.java 2053 2014-06-10 20:16:57Z tgaskins $
+ * @version $Id: TextRenderer.java 2387 2014-10-15 20:25:02Z tgaskins $
  */
 
 package gov.nasa.worldwind.render;
@@ -133,8 +133,14 @@ public class TextRenderer {
     }
 
     // These are occasionally useful for more in-depth debugging
-    private static final boolean DISABLE_GLYPH_CACHE = true;
+    private static boolean DISABLE_GLYPH_CACHE = false;
     private static final boolean DRAW_BBOXES = false;
+    static
+    {
+        String arg = System.getProperty("gov.nasa.worldwind.textrender.useglyphcache");
+        if (arg != null && arg.toLowerCase().startsWith("f"))
+            DISABLE_GLYPH_CACHE = true;
+    }
 
     static final int kSize = 256;
 

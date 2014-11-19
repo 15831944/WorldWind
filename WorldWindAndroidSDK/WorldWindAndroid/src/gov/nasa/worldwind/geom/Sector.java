@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -908,6 +909,62 @@ public class Sector implements Iterable<LatLon>
 	{
 		return maxLatitude;
 	}
+	
+    /**
+     * Returns an approximation of the distance in model coordinates between the surface geometry defined by this sector
+     * and the specified model coordinate point. The returned value represents the shortest distance between the
+     * specified point and this sector's corner points or its center point. The draw context defines the globe and the
+     * elevations that are used to compute the corner points and the center point.
+     *
+     * @param dc    The draw context defining the surface geometry.
+     * @param point The model coordinate point to compute a distance to.
+     *
+     * @return The distance between this sector's surface geometry and the specified point, in model coordinates.
+     *
+     * @throws IllegalArgumentException if any argument is null.
+     */
+    public double distanceTo(DrawContext dc, Vec4 point)
+    {
+        if (dc == null)
+        {
+            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (point == null)
+        {
+            String message = Logging.getMessage("nullValue.PointIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Vec4[] corners = new Vec4[] {new Vec4(), new Vec4(), new Vec4(), new Vec4(), new Vec4()};     
+        this.computeCornerPoints(dc.getGlobe(), dc.getVerticalExaggeration(), corners);
+        
+        Vec4 centerPoint = new Vec4();
+        this.computeCentroidPoint(dc.getGlobe(), dc.getVerticalExaggeration(), centerPoint);
+
+        // Get the distance for each of the sector's corners and its center.
+        double d1 = point.distanceTo3(corners[0]);
+        double d2 = point.distanceTo3(corners[1]);
+        double d3 = point.distanceTo3(corners[2]);
+        double d4 = point.distanceTo3(corners[3]);
+        double d5 = point.distanceTo3(centerPoint);
+
+        // Find the minimum distance.
+        double minDistance = d1;
+        if (minDistance > d2)
+            minDistance = d2;
+        if (minDistance > d3)
+            minDistance = d3;
+        if (minDistance > d4)
+            minDistance = d4;
+        if (minDistance > d5)
+            minDistance = d5;
+
+        return minDistance;
+    }
 
     /**
      * Returns a string indicating the sector's angles.

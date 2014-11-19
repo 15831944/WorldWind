@@ -14,7 +14,7 @@ import java.awt.event.*;
 
 /**
  * @author dcollins
- * @version $Id: BasicViewInputHandler.java 2192 2014-08-01 23:32:07Z dcollins $
+ * @version $Id: BasicViewInputHandler.java 2251 2014-08-21 21:17:46Z dcollins $
  */
 public abstract class BasicViewInputHandler extends AbstractViewInputHandler
 {
@@ -368,7 +368,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
             Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
             Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
             Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
-            if (point == null || lastPoint == null)
+            if (point == null || lastPoint == null || mouseDownPoint == null)
             {
                 return false;
             }

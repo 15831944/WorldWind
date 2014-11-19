@@ -5,7 +5,7 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id: worldwind.xml 2125 2014-07-03 17:23:34Z tgaskins $-->
+<!--$Id: worldwind.xml 2348 2014-09-25 23:35:46Z dcollins $-->
 <!--Default World Wind configuration values-->
 <!--Any of these can be overridden by specifying an application configuration document-->
 <!--An alternate document to this one can also be specified-->
@@ -34,6 +34,8 @@
     <Property name="gov.nasa.worldwind.avkey.ElevationModelFactory"
               value="gov.nasa.worldwind.terrain.BasicElevationModelFactory"/>
     <Property name="gov.nasa.worldwind.avkey.LayerFactory" value="gov.nasa.worldwind.layers.BasicLayerFactory"/>
+    <Property name="gov.nasa.worldwind.avkey.ShapefileLayerFactory"
+              value="gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory"/>
     <Property name="gov.nasa.worldwind.avkey.WebViewFactory"
               value="gov.nasa.worldwind.util.webview.BasicWebViewFactory"/>
     <Property name="gov.nasa.worldwind.avkey.TessellatorClassName"

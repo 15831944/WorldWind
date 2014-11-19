@@ -2,7 +2,7 @@
  Copyright (C) 2014 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: LocationServicesController.m 2159 2014-07-21 19:54:43Z tgaskins $
+ @version $Id: LocationServicesController.m 2362 2014-10-01 20:09:06Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -23,8 +23,9 @@
     locationManager = [[CLLocationManager alloc] init];
     [locationManager setActivityType:CLActivityTypeOtherNavigation];
     [locationManager setDesiredAccuracy:kCLLocationAccuracyBestForNavigation];
-    [locationManager setDistanceFilter:50];
+    [locationManager setDistanceFilter:10];
     [locationManager setDelegate:self];
+    [locationManager requestAlwaysAuthorization];
 
     [self setMode:LocationServicesControllerModeAllChanges];
 

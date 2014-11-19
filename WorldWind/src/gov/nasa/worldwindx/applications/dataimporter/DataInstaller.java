@@ -31,7 +31,7 @@ import java.util.*;
  * Handles all the work necessary to install tiled image layers and elevation models.
  *
  * @author tag
- * @version $Id: DataInstaller.java 1180 2013-02-15 18:40:47Z tgaskins $
+ * @version $Id: DataInstaller.java 2257 2014-08-22 18:02:19Z tgaskins $
  */
 public class DataInstaller extends AVListImpl
 {
@@ -382,7 +382,7 @@ public class DataInstaller extends AVListImpl
         }
         sb.append(productionParams.getValue(AVKey.DATASET_NAME)).append(".RasterServer.xml");
 
-        Object o = productionParams.getValue(AVKey.DISPLAY_NAME);
+        Object o = productionParams.getStringValue(AVKey.DISPLAY_NAME);
         if (WWUtil.isEmpty(o))
         {
             productionParams.setValue(AVKey.DISPLAY_NAME, productionParams.getValue(AVKey.DATASET_NAME));

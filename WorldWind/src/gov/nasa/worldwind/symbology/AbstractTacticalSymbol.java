@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * @author dcollins
- * @version $Id: AbstractTacticalSymbol.java 2198 2014-08-07 16:34:59Z tgaskins $
+ * @version $Id: AbstractTacticalSymbol.java 2366 2014-10-02 23:16:31Z tgaskins $
  */
 public abstract class AbstractTacticalSymbol extends WWObjectImpl implements TacticalSymbol, Movable
 {
@@ -641,6 +641,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * during pick resolution. Initially <code>null</code>.
      */
     protected Layer pickLayer;
+    /**
+     * The LOD selector specified by the application, or null if none specified (the default).
+     */
+    protected LODSelector LODSelector;
 
     /** Constructs a new symbol with no position. */
     protected AbstractTacticalSymbol()
@@ -890,6 +894,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.unitsFormat = unitsFormat;
     }
 
+    @Override
+    public LODSelector getLODSelector()
+    {
+        return LODSelector;
+    }
+
+    @Override
+    public void setLODSelector(LODSelector LODSelector)
+    {
+        this.LODSelector = LODSelector;
+    }
+
     /** {@inheritDoc} */
     public Position getReferencePosition()
     {
@@ -1086,6 +1102,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (osym.screenRect == null && !this.intersectsFrustum(dc, osym))
                 return;
 
+            if (this.getLODSelector() != null)
+                this.getLODSelector().selectLOD(dc, this, osym.eyeDistance);
+
             // Compute the currently active attributes from either the normal or the highlight attributes.
             this.determineActiveAttributes();
             if (this.getActiveAttributes() == null)
@@ -1128,7 +1147,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (pos == null)
             return;
 
-        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
+        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
         {
             osym.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
         }
@@ -1481,7 +1500,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param hotspot    Offset into the rectangle of the hot spot.
      * @param size       Size of the rectangle.
      * @param layoutMode One of {@link #LAYOUT_ABSOLUTE}, {@link #LAYOUT_RELATIVE}, or {@link #LAYOUT_NONE}.
-     * @param osym      The OrderedSymbol to hold the per-frame data.
+     * @param osym       The OrderedSymbol to hold the per-frame data.
      *
      * @return the laid out rectangle.
      */
@@ -1539,7 +1558,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param hotspot    Offset into the rectangle of the hot spot.
      * @param size       Size of the rectangle.
      * @param layoutMode One of {@link #LAYOUT_ABSOLUTE}, {@link #LAYOUT_RELATIVE}, or {@link #LAYOUT_NONE}.
-     * @param osym      The OrderedSymbol to hold the per-frame data.
+     * @param osym       The OrderedSymbol to hold the per-frame data.
      *
      * @return the laid out rectangle.
      */

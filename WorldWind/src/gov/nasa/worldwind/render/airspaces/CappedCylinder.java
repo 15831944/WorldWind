@@ -7,9 +7,10 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import gov.nasa.worldwind.geom.Box;
+import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.media.opengl.*;
@@ -19,7 +20,7 @@ import java.util.*;
  * A cylinder defined by a geographic position, a radius in meters, and minimum and maximum altitudes.
  *
  * @author tag
- * @version $Id: CappedCylinder.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: CappedCylinder.java 2309 2014-09-17 00:04:08Z tgaskins $
  */
 public class CappedCylinder extends AbstractAirspace
 {
@@ -55,6 +56,20 @@ public class CappedCylinder extends AbstractAirspace
 
         this.center = location;
         this.outerRadius = radius;
+        this.makeDefaultDetailLevels();
+    }
+
+    public CappedCylinder(CappedCylinder source)
+    {
+        super(source);
+
+        this.center = source.center;
+        this.innerRadius = source.innerRadius;
+        this.outerRadius = source.outerRadius;
+        this.enableCaps = source.enableCaps;
+        this.slices = source.slices;
+        this.loops = source.loops;
+
         this.makeDefaultDetailLevels();
     }
 
@@ -140,7 +155,7 @@ public class CappedCylinder extends AbstractAirspace
         }
 
         this.center = location;
-        this.setExtentOutOfDate();
+        this.invalidateAirspaceData();
     }
 
     /**
@@ -181,7 +196,7 @@ public class CappedCylinder extends AbstractAirspace
 
         this.innerRadius = innerRadius;
         this.outerRadius = outerRadius;
-        this.setExtentOutOfDate();
+        this.invalidateAirspaceData();
     }
 
     /**
@@ -265,7 +280,7 @@ public class CappedCylinder extends AbstractAirspace
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
     {
         double[] radii = this.getRadii();
-        Matrix transform = this.computeTransform(globe, verticalExaggeration);
+        Matrix transform = this.computeEllipsoidalTransform(globe, verticalExaggeration);
 
         GeometryBuilder gb = this.getGeometryBuilder();
         int count = gb.getDiskVertexCount(MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
@@ -281,13 +296,36 @@ public class CappedCylinder extends AbstractAirspace
         {
             Vec4 v = new Vec4(verts[i], verts[i + 1], verts[i + 2]);
             v = v.transformBy4(transform);
-            locations.add(globe.computePositionFromPoint(v));
+            locations.add(globe.computePositionFromEllipsoidalPoint(v));
         }
 
         ArrayList<Vec4> points = new ArrayList<Vec4>();
         this.makeExtremePoints(globe, verticalExaggeration, locations, points);
 
         return points;
+    }
+
+    protected void doMoveTo(Globe globe, Position oldRef, Position newRef)
+    {
+        if (oldRef == null)
+        {
+            String message = "nullValue.OldRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (newRef == null)
+        {
+            String message = "nullValue.NewRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        List<LatLon> oldLocations = new ArrayList<LatLon>(1);
+        oldLocations.add(this.getCenter());
+        List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, oldLocations);
+        this.setCenter(newLocations.get(0));
+
+        super.doMoveTo(oldRef, newRef);
     }
 
     protected void doMoveTo(Position oldRef, Position newRef)
@@ -311,6 +349,55 @@ public class CappedCylinder extends AbstractAirspace
         double distance = LatLon.greatCircleDistance(oldRef, center).radians;
         double azimuth = LatLon.greatCircleAzimuth(oldRef, center).radians;
         this.setCenter(LatLon.greatCircleEndPosition(newRef, azimuth, distance));
+    }
+
+    @Override
+    protected SurfaceShape createSurfaceShape()
+    {
+        return new SurfacePolygon();
+    }
+
+    @Override
+    protected void updateSurfaceShape(DrawContext dc, SurfaceShape shape)
+    {
+        super.updateSurfaceShape(dc, shape);
+
+        boolean mustDrawInterior = this.getActiveAttributes().isDrawInterior() && this.isEnableCaps();
+        shape.getAttributes().setDrawInterior(mustDrawInterior); // suppress the shape interior when caps are disabled
+    }
+
+    @Override
+    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape)
+    {
+        GeometryBuilder gb = this.getGeometryBuilder();
+        int vertexCount = gb.getCylinderVertexCount(this.slices, 0);
+        float[] coords = new float[3 * vertexCount];
+        gb.makeCylinderVertices((float) this.outerRadius, 0, this.slices, 0, coords);
+
+        Globe globe = dc.getGlobe();
+        Matrix transform = this.computeEllipsoidalTransform(globe, dc.getVerticalExaggeration());
+        LatLon[] locations = new LatLon[vertexCount];
+        for (int i = 0; i < vertexCount; i++)
+        {
+            Vec4 point = new Vec4(coords[3 * i], coords[3 * i + 1], coords[3 * i + 2]).transformBy4(transform);
+            locations[i] = globe.computePositionFromEllipsoidalPoint(point);
+        }
+
+        ((SurfacePolygon) shape).getBoundaries().clear();
+        ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
+
+        if (this.innerRadius > 0)
+        {
+            gb.makeCylinderVertices((float) this.innerRadius, 0, this.slices, 0, coords);
+            locations = new LatLon[vertexCount];
+            for (int i = 0; i < vertexCount; i++)
+            {
+                Vec4 point = new Vec4(coords[3 * i], coords[3 * i + 1], coords[3 * i + 2]).transformBy4(transform);
+                locations[i] = globe.computePositionFromEllipsoidalPoint(point);
+            }
+
+            ((SurfacePolygon) shape).addInnerBoundary(Arrays.asList(locations));
+        }
     }
 
     protected int getSlices()
@@ -373,10 +460,10 @@ public class CappedCylinder extends AbstractAirspace
 
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
         return dc.getGlobe().computePointFromPosition(this.center.getLatitude(), this.center.getLongitude(),
-            altitudes[0]);
+            altitudes[0]); // model-coordinate reference center
     }
 
-    protected Matrix computeTransform(Globe globe, double verticalExaggeration)
+    protected Matrix computeEllipsoidalTransform(Globe globe, double verticalExaggeration)
     {
         if (globe == null)
         {
@@ -386,8 +473,7 @@ public class CappedCylinder extends AbstractAirspace
         }
 
         double[] altitudes = this.getAltitudes(verticalExaggeration);
-        return globe.computeSurfaceOrientationAtPosition(
-            this.center.getLatitude(), this.center.getLongitude(), altitudes[0]);
+        return globe.computeEllipsoidalOrientationAtPosition(this.center.latitude, this.center.longitude, altitudes[0]);
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle)
@@ -529,7 +615,7 @@ public class CappedCylinder extends AbstractAirspace
             this.getGeometryCache().add(cacheKey, indexGeom);
         }
 
-        this.getRenderer().drawGeometry(dc, indexGeom, vertexGeom);
+        this.drawGeometry(dc, indexGeom, vertexGeom);
     }
 
     private void drawCylinderOutline(DrawContext dc, double radius, double[] altitudes, boolean[] terrainConformant,
@@ -549,7 +635,7 @@ public class CappedCylinder extends AbstractAirspace
             this.getGeometryCache().add(cacheKey, outlineIndexGeom);
         }
 
-        this.getRenderer().drawGeometry(dc, outlineIndexGeom, vertexGeom);
+        this.drawGeometry(dc, outlineIndexGeom, vertexGeom);
     }
 
     private Geometry createCylinderVertexGeometry(DrawContext dc, double radius, double[] altitudes,
@@ -599,7 +685,7 @@ public class CappedCylinder extends AbstractAirspace
         Vec4 referenceCenter)
     {
         Globe globe = dc.getGlobe();
-        Matrix transform = this.computeTransform(dc.getGlobe(), dc.getVerticalExaggeration());
+        Matrix transform = this.computeEllipsoidalTransform(dc.getGlobe(), dc.getVerticalExaggeration());
 
         for (int i = 0; i < slices; i++)
         {
@@ -607,14 +693,15 @@ public class CappedCylinder extends AbstractAirspace
             index = 3 * index;
             Vec4 vec = new Vec4(verts[index], verts[index + 1], verts[index + 2]);
             vec = vec.transformBy4(transform);
-            Position p = globe.computePositionFromPoint(vec);
+            Position p = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point
 
             for (int j = 0; j <= stacks; j++)
             {
                 double elevation = altitudes[j];
                 if (terrainConformant[j])
                     elevation += this.computeElevationAt(dc, p.getLatitude(), p.getLongitude());
-                vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(), elevation);
+                vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(),
+                    elevation); // final model-coordinate point
 
                 index = j + i * (stacks + 1);
                 index = 3 * index;
@@ -684,7 +771,7 @@ public class CappedCylinder extends AbstractAirspace
             this.getGeometryCache().add(cacheKey, indexGeom);
         }
 
-        this.getRenderer().drawGeometry(dc, indexGeom, vertexGeom);
+        this.drawGeometry(dc, indexGeom, vertexGeom);
     }
 
     private void makeDisk(DrawContext dc, double[] radii, double altitude, boolean terrainConformant,
@@ -712,19 +799,20 @@ public class CappedCylinder extends AbstractAirspace
         Vec4 referenceCenter)
     {
         Globe globe = dc.getGlobe();
-        Matrix transform = this.computeTransform(dc.getGlobe(), dc.getVerticalExaggeration());
+        Matrix transform = this.computeEllipsoidalTransform(dc.getGlobe(), dc.getVerticalExaggeration());
 
         for (int i = 0; i < numCoords; i += 3)
         {
             Vec4 vec = new Vec4(verts[i], verts[i + 1], verts[i + 2]);
             vec = vec.transformBy4(transform);
-            Position p = globe.computePositionFromPoint(vec);
+            Position p = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point
 
             double elevation = altitude;
             if (terrainConformant)
                 elevation += this.computeElevationAt(dc, p.getLatitude(), p.getLongitude());
 
-            vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(), elevation);
+            vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(),
+                elevation); // final model-coordinate point
             verts[i] = (float) (vec.x - referenceCenter.x);
             verts[i + 1] = (float) (vec.y - referenceCenter.y);
             verts[i + 2] = (float) (vec.z - referenceCenter.z);

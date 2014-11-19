@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.awt.image.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.nio.*;
 import java.util.*;
 
@@ -48,7 +48,7 @@ import java.util.*;
 
 /**
  * @author Tom Gaskins
- * @version $Id: BasicElevationModel.java 2180 2014-07-25 22:35:46Z dcollins $
+ * @version $Id: BasicElevationModel.java 2350 2014-09-29 17:17:48Z tgaskins $
  */
 public class BasicElevationModel extends AbstractElevationModel implements BulkRetrievable
 {
@@ -433,7 +433,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
                 this.elevationModel.downloadElevations(tile);
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 String msg = Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
                     this.tileKey.toString());
@@ -482,7 +482,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     // Reads a tile's elevations from the file cache and adds the tile to the memory cache.
 
-    protected boolean loadElevations(ElevationTile tile, java.net.URL url) throws IOException
+    protected boolean loadElevations(ElevationTile tile, java.net.URL url) throws Exception
     {
         BufferWrapper elevations = this.readElevations(url);
         if (elevations == null || elevations.length() == 0)
@@ -524,7 +524,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     // Read elevations from the file cache. Don't be confused by the use of a URL here: it's used so that files can
     // be read using System.getResource(URL), which will draw the data from a jar file in the classpath.
 
-    protected BufferWrapper readElevations(URL url) throws IOException
+    protected BufferWrapper readElevations(URL url) throws Exception
     {
         try
         {
@@ -533,7 +533,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             else
                 return this.makeBilElevations(url);
         }
-        catch (java.io.IOException e)
+        catch (Exception e)
         {
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 "ElevationModel.ExceptionReadingElevationFile", url.toString());
@@ -556,9 +556,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return BufferWrapper.wrap(byteBuffer, bufferParams);
     }
 
-    protected BufferWrapper makeTiffElevations(URL url) throws IOException
+    protected BufferWrapper makeTiffElevations(URL url) throws IOException, URISyntaxException
     {
-        File file = new File(url.getPath());
+        File file = new File(url.toURI());
 
         // Create a raster reader for the file type.
         DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(

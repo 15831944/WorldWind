@@ -28,7 +28,8 @@ import gov.nasa.worldwind.util.*;
  * #nextPolygonAttributes()}</li></ul>.
  *
  * @author dcollins
- * @version $Id: ShapefileLoader.java 2099 2014-06-26 16:51:29Z dcollins $
+ * @version $Id: ShapefileLoader.java 2326 2014-09-17 22:35:45Z dcollins $
+ * @deprecated Use {@link ShapefileLayerFactory} instead.
  */
 public class ShapefileLoader
 {
@@ -237,13 +238,7 @@ public class ShapefileLoader
     protected void addRenderablesForExtrudedPolygons(Shapefile shp, RenderableLayer layer)
     {
         ShapeAttributes attrs = this.nextPolygonAttributes();
-        ShapefileExtrudedPolygons shape = new ShapefileExtrudedPolygons(shp);
-
-        for (ShapefileRenderable.Record record : shape)
-        {
-            record.setAttributes(attrs);
-        }
-
+        ShapefileExtrudedPolygons shape = new ShapefileExtrudedPolygons(shp, attrs, null, null);
         layer.addRenderable(shape);
     }
 
@@ -376,7 +371,7 @@ public class ShapefileLoader
     {
         synchronized (randomAttrs)
         {
-            return randomAttrs.nextPointAttributes();
+            return randomAttrs.nextAttributes().asPointAttributes();
         }
     }
 
@@ -384,7 +379,7 @@ public class ShapefileLoader
     {
         synchronized (randomAttrs)
         {
-            return randomAttrs.nextPolylineAttributes();
+            return randomAttrs.nextAttributes().asShapeAttributes();
         }
     }
 
@@ -392,7 +387,7 @@ public class ShapefileLoader
     {
         synchronized (randomAttrs)
         {
-            return randomAttrs.nextPolygonAttributes();
+            return randomAttrs.nextAttributes().asShapeAttributes();
         }
     }
 }

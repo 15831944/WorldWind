@@ -7,7 +7,7 @@ package gov.nasa.worldwind.render.airspaces;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.media.opengl.*;
@@ -15,7 +15,7 @@ import java.util.*;
 
 /**
  * @author lado
- * @version $Id: Box.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: Box.java 2371 2014-10-08 22:28:18Z dcollins $
  */
 public class Box extends AbstractAirspace
 {
@@ -27,8 +27,11 @@ public class Box extends AbstractAirspace
     {
         /** Indicates the globe state used to generate the vertex data. Initially <code>null</code>. */
         public GlobeStateKey globeStateKey;
-        /** Indicates the Box's vertex data. Initially an array with length eight containing <code>null</code> entries. */
-        public Vec4[] vertices = new Vec4[8];
+        /**
+         * Indicates the Box's vertex data on the ellipsoid specified by the globe associated with the globeStateKeyl.
+         * Initially an array with length eight containing <code>null</code> entries.
+         */
+        public Vec4[] ellipsoidalVertices = new Vec4[8];
 
         /**
          * Constructs a new BoxData with its globeStateKey initialized to <code>null</code> and its vertices initialized
@@ -65,12 +68,17 @@ public class Box extends AbstractAirspace
     protected static final int MINIMAL_GEOMETRY_PILLARS = 8;
     protected static final int MINIMAL_GEOMETRY_STACKS = 4;
 
+    protected static final int DEFAULT_CENTER_LINE_STIPPLE_FACTOR = 2;
+    protected static final short DEFAULT_CENTER_LINE_STIPPLE_PATTERN = (short) 0xEEEE;
+    protected static final double DEFAULT_CENTER_LINE_OFFSET = 0.999;
+
     private LatLon location1 = LatLon.ZERO;
     private LatLon location2 = LatLon.ZERO;
     private double leftWidth = 1.0;
     private double rightWidth = 1.0;
     private boolean enableStartCap = true;
     private boolean enableEndCap = true;
+    private boolean enableCenterLine;
 
     /**
      * Map indicating the box's vertices associated with a particular globe. This enables a box to be used
@@ -78,7 +86,7 @@ public class Box extends AbstractAirspace
      * <code>null</code> keys. Null keys are used for backward compatibility with the Box accessor methods that do not
      * specify a globe.
      */
-    protected Map<Globe, BoxData> boxData = new HashMap<Globe, BoxData>(2); // Usually holds either one or two entries.
+    protected Map<GlobeStateKey, BoxData> boxData = new HashMap<GlobeStateKey, BoxData>(2); // Usually holds either one or two entries.
     private boolean forceCullFace = false;
     private int pillars = DEFAULT_PILLARS;
     private int stacks = DEFAULT_STACKS;
@@ -115,6 +123,25 @@ public class Box extends AbstractAirspace
         this.location2 = location2;
         this.leftWidth = leftWidth;
         this.rightWidth = rightWidth;
+        this.makeDefaultDetailLevels();
+    }
+
+    public Box(Box source)
+    {
+        super(source);
+
+        this.location1 = source.location1;
+        this.location2 = source.location2;
+        this.leftWidth = source.leftWidth;
+        this.rightWidth = source.rightWidth;
+        this.enableStartCap = source.enableStartCap;
+        this.enableEndCap = source.enableEndCap;
+        this.enableCenterLine = source.enableCenterLine;
+        this.forceCullFace = source.forceCullFace;
+        this.pillars = source.pillars;
+        this.stacks = source.stacks;
+        this.heightStacks = source.heightStacks;
+
         this.makeDefaultDetailLevels();
     }
 
@@ -201,7 +228,7 @@ public class Box extends AbstractAirspace
 
         this.location1 = location1;
         this.location2 = location2;
-        this.setExtentOutOfDate();
+        this.invalidateAirspaceData();
     }
 
     public double[] getWidths()
@@ -229,7 +256,7 @@ public class Box extends AbstractAirspace
 
         this.leftWidth = leftWidth;
         this.rightWidth = rightWidth;
-        this.setExtentOutOfDate();
+        this.invalidateAirspaceData();
     }
 
     public boolean[] isEnableCaps()
@@ -244,6 +271,7 @@ public class Box extends AbstractAirspace
     {
         this.enableStartCap = enableStartCap;
         this.enableEndCap = enableEndCap;
+        this.invalidateAirspaceData();
     }
 
     public void setEnableCaps(boolean enable)
@@ -261,14 +289,25 @@ public class Box extends AbstractAirspace
         this.setEnableCaps(this.enableStartCap, enable);
     }
 
-    public Vec4[] getVertices()
+    public boolean isEnableCenterLine()
     {
-        return this.getVertices(null);
+        return this.enableCenterLine;
     }
 
-    public void setVertices(Vec4[] vertices)
+    public void setEnableCenterLine(boolean enable)
     {
-        this.setVertices(null, vertices);
+        this.enableCenterLine = enable;
+        this.invalidateAirspaceData();
+    }
+
+    public Vec4[] getEllipsoidalVertices()
+    {
+        return this.getEllipsoidalVertices(null);
+    }
+
+    public void setEllipsoidalVertices(Vec4[] vertices)
+    {
+        this.setEllipsoidalVertices(null, vertices);
     }
 
     /**
@@ -285,7 +324,7 @@ public class Box extends AbstractAirspace
      */
     public boolean isVerticesValid(Globe globe)
     {
-        BoxData data = this.boxData.get(globe);
+        BoxData data = this.boxData.get(globe.getGlobeStateKey());
         return data != null && data.globeStateKey != null && data.globeStateKey.equals(globe.getGlobeStateKey());
     }
 
@@ -300,10 +339,10 @@ public class Box extends AbstractAirspace
      * @return an array of length 8 indicating this box's vertices in model coordinates, or <code>null</code> to
      *         indicate that no vertices are associated with the globe.
      */
-    public Vec4[] getVertices(Globe globe)
+    public Vec4[] getEllipsoidalVertices(Globe globe)
     {
-        BoxData data = this.boxData.get(globe);
-        return data != null ? data.vertices : null;
+        BoxData data = this.boxData.get(globe.getGlobeStateKey());
+        return data != null ? data.ellipsoidalVertices : null;
     }
 
     /**
@@ -320,11 +359,11 @@ public class Box extends AbstractAirspace
      * @throws IllegalArgumentException if the vertices array is not <code>null</code> and has fewer than eight
      *                                  elements.
      */
-    public void setVertices(Globe globe, Vec4[] vertices)
+    public void setEllipsoidalVertices(Globe globe, Vec4[] vertices)
     {
         if (vertices == null)
         {
-            this.boxData.remove(globe);
+            this.boxData.remove(globe.getGlobeStateKey());
         }
         else
         {
@@ -335,22 +374,22 @@ public class Box extends AbstractAirspace
                 throw new IllegalArgumentException(message);
             }
 
-            BoxData data = this.boxData.get(globe);
+            BoxData data = this.boxData.get(globe.getGlobeStateKey());
 
             // Create a box data if one doesn't already exist and put it in the map.
             if (data == null)
             {
                 data = new BoxData();
-                this.boxData.put(globe, data);
+                this.boxData.put(globe.getGlobeStateKey(), data);
             }
 
             // Copy the specified vertices into the data held by this box's map.
-            System.arraycopy(vertices, 0, data.vertices, 0, 8);
+            System.arraycopy(vertices, 0, data.ellipsoidalVertices, 0, 8);
             // Update the box data's globe state key.
             data.globeStateKey = globe.getGlobeStateKey();
         }
 
-        this.setExtentOutOfDate();
+        this.invalidateAirspaceData();
     }
 
     /** Removes all of this box's globe-associated vertex data. */
@@ -359,7 +398,7 @@ public class Box extends AbstractAirspace
         this.boxData.clear();
     }
 
-    public static Vec4[] computeStandardVertices(Globe globe, double verticalExaggeration, Box box)
+    public static Vec4[] computeEllipsoidalStandardVertices(Globe globe, double verticalExaggeration, Box box)
     {
         if (globe == null)
         {
@@ -378,16 +417,20 @@ public class Box extends AbstractAirspace
         double[] altitudes = box.getAltitudes(verticalExaggeration);
 
         // Compute the Cartesian points of this Box's first and second locations at the upper and lower altitudes.
-        Vec4 al = globe.computePointFromPosition(box.location1, altitudes[0]);
-        Vec4 au = globe.computePointFromPosition(box.location1, altitudes[1]);
-        Vec4 bl = globe.computePointFromPosition(box.location2, altitudes[0]);
-        Vec4 bu = globe.computePointFromPosition(box.location2, altitudes[1]);
+        Vec4 al = globe.computeEllipsoidalPointFromPosition(box.location1.latitude, box.location1.longitude,
+            altitudes[0]);
+        Vec4 au = globe.computeEllipsoidalPointFromPosition(box.location1.latitude, box.location1.longitude,
+            altitudes[1]);
+        Vec4 bl = globe.computeEllipsoidalPointFromPosition(box.location2.latitude, box.location2.longitude,
+            altitudes[0]);
+        Vec4 bu = globe.computeEllipsoidalPointFromPosition(box.location2.latitude, box.location2.longitude,
+            altitudes[1]);
 
         // Compute vectors at the first and second locations that are perpendicular to the vector connecting the two
         // points and perpendicular to the Globe's normal at each point. These perpendicular vectors are used to
         // determine this Box's points to the left and right of its Cartesian points.
-        Vec4 aNormal = globe.computeSurfaceNormalAtPoint(al);
-        Vec4 bNormal = globe.computeSurfaceNormalAtPoint(bl);
+        Vec4 aNormal = globe.computeEllipsoidalNormalAtLocation(box.location1.latitude, box.location1.longitude);
+        Vec4 bNormal = globe.computeEllipsoidalNormalAtLocation(box.location2.latitude, box.location2.longitude);
         Vec4 ab = bl.subtract3(al).normalize3();
         Vec4 aPerp = ab.cross3(aNormal).normalize3();
         Vec4 bPerp = ab.cross3(bNormal).normalize3();
@@ -406,9 +449,9 @@ public class Box extends AbstractAirspace
 
     /**
      * Returns an array of six <code>Plane</code>s that define the plane for each face of the specified <code>box</code>
-     * on the specified <code>globe</code>. The each plane may be accessed using the <code>FACE</code> constants in
-     * <code>Box</code> as indices into the array: {@link #FACE_TOP}, {@link #FACE_BOTTOM}, {@link #FACE_LEFT}, {@link
-     * #FACE_RIGHT}, {@link #FACE_FRONT}, {@link #FACE_BACK}.
+     * on ellipsoid specified by the <code>globe</code>. The each plane may be accessed using the <code>FACE</code>
+     * constants in <code>Box</code> as indices into the array: {@link #FACE_TOP}, {@link #FACE_BOTTOM}, {@link
+     * #FACE_LEFT}, {@link #FACE_RIGHT}, {@link #FACE_FRONT}, {@link #FACE_BACK}.
      *
      * @param globe                the <code>Globe</code> the box is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene.
@@ -417,7 +460,7 @@ public class Box extends AbstractAirspace
      * @return six <code>Plane</code>s for each face of the specified <code>box</code>, in the following order: top,
      *         bottom, left, right, front, back.
      */
-    public static Plane[] computeStandardPlanes(Globe globe, double verticalExaggeration, Box box)
+    public static Plane[] computeEllipsoidalStandardPlanes(Globe globe, double verticalExaggeration, Box box)
     {
         if (globe == null)
         {
@@ -433,7 +476,7 @@ public class Box extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        Vec4[] vertices = computeStandardVertices(globe, verticalExaggeration, box);
+        Vec4[] vertices = computeEllipsoidalStandardVertices(globe, verticalExaggeration, box);
         if (vertices == null || vertices.length != 8) // This should never happen, but we check anyway.
             return null;
 
@@ -465,9 +508,9 @@ public class Box extends AbstractAirspace
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
     {
-        Vec4[] verts = this.getVertices(globe);
+        Vec4[] verts = this.getEllipsoidalVertices(globe);
         if (verts == null)
-            verts = computeStandardVertices(globe, verticalExaggeration, this);
+            verts = computeEllipsoidalStandardVertices(globe, verticalExaggeration, this);
 
         float[] controlPoints = new float[12];
         this.makeControlPoints(verts, A_UPR_RIGHT, B_UPR_RIGHT, B_UPR_LEFT, A_UPR_LEFT, Vec4.ZERO, controlPoints);
@@ -485,13 +528,63 @@ public class Box extends AbstractAirspace
         for (int i = 0; i < count; i++)
         {
             Vec4 v = Vec4.fromFloatArray(coords, 3 * i, 3);
-            locations[i] = globe.computePositionFromPoint(v);
+            locations[i] = globe.computePositionFromEllipsoidalPoint(v);
         }
 
         ArrayList<Vec4> points = new ArrayList<Vec4>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
+    }
+
+    @Override
+    protected SurfaceShape createSurfaceShape()
+    {
+        return new SurfaceBox();
+    }
+
+    @Override
+    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape)
+    {
+        Globe globe = dc.getGlobe();
+        Vec4[] verts = this.getEllipsoidalVertices(globe);
+        if (verts == null)
+            verts = computeEllipsoidalStandardVertices(globe, dc.getVerticalExaggeration(), this);
+
+        LatLon[] locations = this.getLocations();
+        LatLon[] corners = new LatLon[4];
+        corners[0] = globe.computePositionFromEllipsoidalPoint(verts[A_LOW_LEFT]);
+        corners[1] = globe.computePositionFromEllipsoidalPoint(verts[A_LOW_RIGHT]);
+        corners[2] = globe.computePositionFromEllipsoidalPoint(verts[B_LOW_RIGHT]);
+        corners[3] = globe.computePositionFromEllipsoidalPoint(verts[B_LOW_LEFT]);
+        ((SurfaceBox) shape).setLocations(locations, corners);
+        ((SurfaceBox) shape).setEnableCaps(this.enableStartCap, this.enableEndCap);
+        ((SurfaceBox) shape).setEnableCenterLine(this.enableCenterLine);
+    }
+
+    protected void doMoveTo(Globe globe, Position oldRef, Position newRef)
+    {
+        if (oldRef == null)
+        {
+            String message = "nullValue.OldRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (newRef == null)
+        {
+            String message = "nullValue.NewRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        List<LatLon> locations = new ArrayList<LatLon>(2);
+        locations.add(this.getLocations()[0]);
+        locations.add(this.getLocations()[1]);
+
+        List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, locations);
+        this.setLocations(newLocations.get(0), newLocations.get(1));
+
+        super.doMoveTo(oldRef, newRef);
     }
 
     protected void doMoveTo(Position oldRef, Position newRef)
@@ -596,10 +689,11 @@ public class Box extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        Vec4[] verts = this.getVertices(dc.getGlobe());
+        Vec4[] verts = this.getEllipsoidalVertices(dc.getGlobe());
         if (verts == null)
-            verts = computeStandardVertices(dc.getGlobe(), dc.getVerticalExaggeration(), this);
+            verts = computeEllipsoidalStandardVertices(dc.getGlobe(), dc.getVerticalExaggeration(), this);
 
+        LatLon[] locations = this.getLocations();
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
         boolean[] terrainConformant = this.isTerrainConforming();
         boolean[] enableCaps = this.isEnableCaps();
@@ -643,13 +737,19 @@ public class Box extends AbstractAirspace
 
             if (Airspace.DRAW_STYLE_FILL.equals(drawStyle))
             {
-                this.drawBoxFill(dc, verts, altitudes, terrainConformant, enableCaps, pillars, stacks, heightStacks,
-                    referenceCenter);
+                this.drawBoxFill(dc, verts, locations, altitudes, terrainConformant, enableCaps, pillars, stacks,
+                    heightStacks, referenceCenter);
             }
             else if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle))
             {
-                this.drawBoxOutline(dc, verts, altitudes, terrainConformant, enableCaps,
+                this.drawBoxOutline(dc, verts, locations, altitudes, terrainConformant, enableCaps,
                     pillars, stacks, heightStacks, referenceCenter);
+
+                if (this.enableCenterLine)
+                {
+                    this.drawBoxCenterLine(dc, verts, locations, altitudes, terrainConformant, enableCaps,
+                        pillars, stacks, heightStacks, referenceCenter);
+                }
             }
         }
         finally
@@ -659,32 +759,62 @@ public class Box extends AbstractAirspace
         }
     }
 
+    protected void applyCenterLineState(DrawContext dc)
+    {
+        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        AirspaceAttributes attrs = this.getActiveAttributes();
+
+        if (attrs.getOutlineStippleFactor() <= 0) // don't override stipple in attributes
+        {
+            gl.glEnable(GL2.GL_LINE_STIPPLE);
+            gl.glLineStipple(Box.DEFAULT_CENTER_LINE_STIPPLE_FACTOR, Box.DEFAULT_CENTER_LINE_STIPPLE_PATTERN);
+        }
+    }
+
     //**************************************************************//
     //********************  Box  ***********************************//
     //**************************************************************//
 
-    private void drawBoxFill(DrawContext dc, Vec4[] verts, double[] altitudes, boolean[] terrainConformant,
-        boolean[] enableCaps,
-        int pillars, int stacks, int heightStacks,
+    private void drawBoxFill(DrawContext dc, Vec4[] verts, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, boolean[] enableCaps, int pillars, int stacks, int heightStacks,
         Vec4 referenceCenter)
     {
         Geometry indexGeom = this.getBoxIndexFillGeometry(enableCaps, pillars, stacks, heightStacks);
-        Geometry vertexGeom = this.getBoxVertexGeometry(dc, verts, altitudes, terrainConformant, enableCaps,
+        Geometry vertexGeom = this.getBoxVertexGeometry(dc, verts, locations, altitudes, terrainConformant, enableCaps,
             pillars, stacks, heightStacks, referenceCenter);
 
-        this.getRenderer().drawGeometry(dc, indexGeom, vertexGeom);
+        this.drawGeometry(dc, indexGeom, vertexGeom);
     }
 
-    private void drawBoxOutline(DrawContext dc, Vec4[] verts, double[] altitudes, boolean[] terrainConformant,
-        boolean[] enableCaps,
-        int pillars, int stacks, int heightStacks,
+    private void drawBoxOutline(DrawContext dc, Vec4[] verts, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, boolean[] enableCaps, int pillars, int stacks, int heightStacks,
         Vec4 referenceCenter)
     {
         Geometry indexGeom = this.getBoxIndexOutlineGeometry(enableCaps, pillars, stacks, heightStacks);
-        Geometry vertexGeom = this.getBoxVertexGeometry(dc, verts, altitudes, terrainConformant, enableCaps,
+        Geometry vertexGeom = this.getBoxVertexGeometry(dc, verts, locations, altitudes, terrainConformant, enableCaps,
             pillars, stacks, heightStacks, referenceCenter);
 
-        this.getRenderer().drawGeometry(dc, indexGeom, vertexGeom);
+        this.drawGeometry(dc, indexGeom, vertexGeom);
+    }
+
+    private void drawBoxCenterLine(DrawContext dc, Vec4[] verts, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, boolean[] enableCaps, int pillars, int stacks, int heightStacks,
+        Vec4 referenceCenter)
+    {
+        Geometry indexGeom = this.getBoxIndexCenterLineGeometry(enableCaps, pillars, stacks, heightStacks);
+        Geometry vertexGeom = this.getBoxVertexGeometry(dc, verts, locations, altitudes, terrainConformant, enableCaps,
+            pillars, stacks, heightStacks, referenceCenter);
+
+        try
+        {
+            dc.pushProjectionOffest(DEFAULT_CENTER_LINE_OFFSET); // move center line depth slightly in front of fill
+            this.applyCenterLineState(dc);
+            this.drawGeometry(dc, indexGeom, vertexGeom);
+        }
+        finally
+        {
+            dc.popProjectionOffest();
+        }
     }
 
     private Geometry getBoxIndexFillGeometry(boolean[] enableCaps, int pillars, int stacks, int heightStacks)
@@ -721,10 +851,26 @@ public class Box extends AbstractAirspace
         return geom;
     }
 
-    private Geometry getBoxVertexGeometry(DrawContext dc, Vec4[] verts,
-        double[] altitudes, boolean[] terrainConformant,
-        boolean[] enableCaps,
-        int pillars, int stacks, int heightStacks,
+    private Geometry getBoxIndexCenterLineGeometry(boolean[] enableCaps,
+        int pillars, int stacks, int heightStacks)
+    {
+        Geometry.CacheKey cacheKey = new Geometry.CacheKey(this.getClass(), "Box.CenterLineIndices",
+            enableCaps[0], enableCaps[1],
+            pillars, stacks, heightStacks);
+
+        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        if (geom == null)
+        {
+            geom = new Geometry();
+            this.makeBoxCenterLineIndices(enableCaps, pillars, stacks, heightStacks, geom);
+            this.getGeometryCache().add(cacheKey, geom);
+        }
+
+        return geom;
+    }
+
+    private Geometry getBoxVertexGeometry(DrawContext dc, Vec4[] verts, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, boolean[] enableCaps, int pillars, int stacks, int heightStacks,
         Vec4 referenceCenter)
     {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Box.Vertices",
@@ -736,8 +882,8 @@ public class Box extends AbstractAirspace
         {
             if (geom == null)
                 geom = new Geometry();
-            this.makeBoxVertices(dc, verts, altitudes, terrainConformant, enableCaps, pillars, stacks, heightStacks,
-                referenceCenter, geom);
+            this.makeBoxVertices(dc, verts, locations, altitudes, terrainConformant, enableCaps, pillars, stacks,
+                heightStacks, referenceCenter, geom);
             this.updateExpiryCriteria(dc, geom);
             this.getGeometryCache().add(cacheKey, geom);
         }
@@ -888,6 +1034,29 @@ public class Box extends AbstractAirspace
         dest.setElementData(drawMode, indexCount, indices);
     }
 
+    private void makeBoxCenterLineIndices(boolean[] enableCaps,
+        int pillars, int stacks, int heightStacks, Geometry dest)
+    {
+        GeometryBuilder gb = this.getGeometryBuilder();
+        FaceRenderInfo[] ri = new FaceRenderInfo[6];
+        this.makeFaceInfo(enableCaps, pillars, stacks, heightStacks, ri);
+
+        int firstVertex = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            if (ri[i] != null)
+            {
+                firstVertex += gb.getBilinearSurfaceVertexCount(ri[i].uStacks, ri[i].vStacks);
+            }
+        }
+
+        int indexCount = this.getCenterLineIndexCount(enableCaps, pillars);
+        int[] indices = new int[indexCount];
+        this.makeCenterLineIndices(enableCaps, firstVertex, pillars, 0, indices);
+
+        dest.setElementData(GL.GL_LINES, indexCount, indices);
+    }
+
     private int getOutlineMask(int face, boolean[] enableCaps)
     {
         if (face == FACE_LEFT || face == FACE_RIGHT)
@@ -905,13 +1074,13 @@ public class Box extends AbstractAirspace
         return 0;
     }
 
-    private void makeBoxVertices(DrawContext dc, Vec4[] verts, double[] altitudes, boolean[] terrainConformant,
-        boolean[] enableCaps, int pillars, int stacks, int heightStacks,
-        Vec4 referenceCenter,
-        Geometry dest)
+    private void makeBoxVertices(DrawContext dc, Vec4[] verts, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, boolean[] enableCaps, int pillars, int stacks, int heightStacks,
+        Vec4 referenceCenter, Geometry dest)
     {
         GeometryBuilder gb = this.getGeometryBuilder();
         FaceRenderInfo[] ri = new FaceRenderInfo[6];
+        Range centerLineRange = new Range(0, 0);
         this.makeFaceInfo(enableCaps, pillars, stacks, heightStacks, ri);
 
         int vertexCount = 0;
@@ -925,6 +1094,10 @@ public class Box extends AbstractAirspace
                 vertexCount += ri[i].vertexCount;
             }
         }
+
+        centerLineRange.location = vertexCount;
+        centerLineRange.length = this.getCenterLineVertexCount(pillars);
+        vertexCount += centerLineRange.length;
 
         int numCoords = 3 * vertexCount;
         float[] vertices = new float[numCoords];
@@ -955,6 +1128,9 @@ public class Box extends AbstractAirspace
                     ri[i].firstVertex, normals);
             }
         }
+
+        this.makeCenterLineVertices(dc, locations, altitudes, terrainConformant, centerLineRange.location, pillars,
+            vertices, referenceCenter);
 
         dest.setVertexData(vertexCount, vertices);
         dest.setNormalData(vertexCount, normals);
@@ -995,13 +1171,14 @@ public class Box extends AbstractAirspace
                 verts[index] + referenceCenter.x,
                 verts[index + 1] + referenceCenter.y,
                 verts[index + 2] + referenceCenter.z);
-            Position p = globe.computePositionFromPoint(vec);
+            Position p = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point
 
             double elevation = altitude;
             if (isTerrainConforming)
                 elevation += this.computeElevationAt(dc, p.getLatitude(), p.getLongitude());
 
-            vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(), elevation);
+            vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(),
+                elevation); // final model-coordinate point
             verts[index] = (float) (vec.x - referenceCenter.x);
             verts[index + 1] = (float) (vec.y - referenceCenter.y);
             verts[index + 2] = (float) (vec.z - referenceCenter.z);
@@ -1025,17 +1202,91 @@ public class Box extends AbstractAirspace
                     verts[index] + referenceCenter.x,
                     verts[index + 1] + referenceCenter.y,
                     verts[index + 2] + referenceCenter.z);
-                Position p = globe.computePositionFromPoint(vec);
+                Position p = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point
 
                 double elev = altitude;
                 if ((vi == 0 && terrainConforming[0]) || (vi == vStacks && terrainConforming[1]))
                     elev += this.computeElevationAt(dc, p.getLatitude(), p.getLongitude());
 
-                vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(), elev);
+                vec = globe.computePointFromPosition(p.getLatitude(), p.getLongitude(),
+                    elev); // final model-coordinate point
                 verts[index] = (float) (vec.x - referenceCenter.x);
                 verts[index + 1] = (float) (vec.y - referenceCenter.y);
                 verts[index + 2] = (float) (vec.z - referenceCenter.z);
             }
+        }
+    }
+
+    private int getCenterLineIndexCount(boolean[] enableCaps, int segments)
+    {
+        int count = 4 * segments; // 2 indices for each segment of the lower and upper center line
+        count += enableCaps[0] ? 2 : 0; // 2 indices for start cap segment
+        count += enableCaps[1] ? 2 : 0; // 2 indices for end cap segment
+
+        return count;
+    }
+
+    private void makeCenterLineIndices(boolean[] enableCaps, int vertexPos, int segments, int destPos, int[] dest)
+    {
+        int index = destPos;
+        int vertex = vertexPos;
+
+        if (enableCaps[0]) // start cap segment
+        {
+            dest[index++] = vertex;
+            dest[index++] = vertex + 1;
+        }
+
+        for (int i = 0; i < segments; i++)
+        {
+            for (int j = 0; j < 2; j++) // lower and upper altitude segments
+            {
+                dest[index++] = vertex;
+                dest[index++] = vertex + 2;
+                vertex++;
+            }
+        }
+
+        if (enableCaps[1]) // end cap segment
+        {
+            dest[index++] = vertex;
+            dest[index] = vertex + 1;
+        }
+    }
+
+    private int getCenterLineVertexCount(int segments)
+    {
+        return 2 * (segments + 1); // top and bottom center line
+    }
+
+    private void makeCenterLineVertices(DrawContext dc, LatLon[] locations, double[] altitudes,
+        boolean[] terrainConformant, int pos, int segments, float[] vertices, Vec4 referenceCenter)
+    {
+        Globe globe = dc.getGlobe();
+        boolean useSurfaceHeight = terrainConformant[0] || terrainConformant[1];
+
+        double s = 0;
+        double ds = 1.0 / segments;
+        int index = 3 * pos;
+
+        Vec4 a = globe.computeEllipsoidalPointFromPosition(locations[0].latitude, locations[0].longitude, altitudes[0]);
+        Vec4 b = globe.computeEllipsoidalPointFromPosition(locations[1].latitude, locations[1].longitude, altitudes[0]);
+
+        for (int i = 0; i <= segments; i++)
+        {
+            Vec4 vec = Vec4.mix3(s, a, b); // interpolate between begin and end ellipsoidal points
+            LatLon ll = globe.computePositionFromEllipsoidalPoint(vec); // location of interpolated ellipsoidal point
+            double offset = useSurfaceHeight ? this.computeElevationAt(dc, ll.getLatitude(), ll.getLongitude()) : 0;
+
+            for (int j = 0; j < 2; j++) // final lower and upper altitude model-coordinate points
+            {
+                vec = globe.computePointFromPosition(ll.getLatitude(), ll.getLongitude(), altitudes[j] + offset);
+                vertices[index++] = (float) (vec.x - referenceCenter.x);
+                vertices[index++] = (float) (vec.y - referenceCenter.y);
+                vertices[index++] = (float) (vec.z - referenceCenter.z);
+            }
+
+            s += ds;
         }
     }
 

@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: FlightRouteController.h 1995 2014-05-14 18:22:40Z dcollins $
+ @version $Id: FlightRouteController.h 2356 2014-10-01 18:16:52Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -11,7 +11,7 @@
 @class FlightRoute;
 @class WorldWindView;
 
-@interface FlightRouteController : UITableViewController <UINavigationControllerDelegate, UIAlertViewDelegate, WWRenderable>
+@interface FlightRouteController : UITableViewController <WWRenderable>
 {
 @protected
     NSMutableArray* flightRoutes;

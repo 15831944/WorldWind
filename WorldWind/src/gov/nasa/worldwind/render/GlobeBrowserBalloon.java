@@ -19,7 +19,7 @@ import java.awt.*;
  * the system's native browser, and who's origin is located at a position on the <code>Globe</code>.
  *
  * @author pabercrombie
- * @version $Id: GlobeBrowserBalloon.java 2148 2014-07-14 16:27:49Z tgaskins $
+ * @version $Id: GlobeBrowserBalloon.java 2272 2014-08-25 23:24:45Z tgaskins $
  * @see gov.nasa.worldwind.render.AbstractBrowserBalloon
  */
 public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements GlobeBalloon
@@ -134,7 +134,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         obb.webViewRect = null;
         obb.eyeDistance = 0;
 
-        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
+        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
         {
             ogpm.placePoint = dc.computeTerrainPoint(
                 this.position.getLatitude(), this.position.getLongitude(), 0);

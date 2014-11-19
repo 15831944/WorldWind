@@ -23,7 +23,7 @@ import gov.nasa.worldwind.util.Logging;
  * points east. Latitude and longitude zero are at the origin on y and x respectively. Sea level is at z = zero.
  *
  * @author Patrick Murris
- * @version $Id: FlatGlobe.java 2217 2014-08-11 20:30:18Z tgaskins $
+ * @version $Id: FlatGlobe.java 2277 2014-08-28 21:19:37Z dcollins $
  */
 public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
 {
@@ -132,32 +132,6 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
     public GlobeStateKey getGlobeStateKey()
     {
         return new FlatStateKey(this);
-    }
-
-    @Override
-    public double getRadiusAt(Angle latitude, Angle longitude)
-    {
-        // TODO: Find a more accurate workaround than getMaximumRadius()
-        if (latitude == null || longitude == null)
-        {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        return getMaximumRadius();
-    }
-
-    @Override
-    public double getRadiusAt(LatLon latLon)
-    {
-        // TODO: Find a more accurate workaround then getMaximumRadius()
-        if (latLon == null)
-        {
-            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        return getMaximumRadius();
     }
 
     /**
@@ -380,20 +354,6 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
     }
 
     @Override
-    public Matrix computeSurfaceOrientationAtPosition(Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return this.computeSurfaceOrientationAtPosition(position.getLatitude(), position.getLongitude(),
-            position.getElevation());
-    }
-
-    @Override
     public double getElevation(Angle latitude, Angle longitude)
     {
         if (latitude == null || longitude == null)
@@ -434,6 +394,12 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
 
         return this.projection.geographicToCartesian(this, latitude, longitude, metersElevation,
             this.offsetVector);
+    }
+
+    @Override
+    protected void geodeticToCartesian(Sector sector, int numLat, int numLon, double[] metersElevation, Vec4[] out)
+    {
+        this.projection.geographicToCartesian(this, sector, numLat, numLon, metersElevation, this.offsetVector, out);
     }
 
     @Override

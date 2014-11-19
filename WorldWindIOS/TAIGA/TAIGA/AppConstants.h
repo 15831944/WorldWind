@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppConstants.h 2173 2014-07-24 20:28:32Z tgaskins $
+ @version $Id: AppConstants.h 2369 2014-10-03 16:44:26Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -10,8 +10,8 @@
 
 static const int ddLogLevel = LOG_LEVEL_INFO;
 
-#define TAIGA_VERSION (@"0.0042")
-#define TAIGA_VERSION_DATE (@"7/24/14")
+#define TAIGA_VERSION (@"1.002")
+#define TAIGA_VERSION_DATE (@"10/3/14")
 
 #define TAIGA_DATA_HOST @"worldwindserver.net"
 
@@ -43,7 +43,8 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 #define TAIGA_LOCATION_TRACKING_MODE_NORTH_UP (@"gov.nasa.worldwind.taiga.location.tracking.mode.northup")
 #define TAIGA_LOCATION_TRACKING_MODE_TRACK_UP (@"gov.nasa.worldwind.taiga.location.tracking.mode.trackup")
 #define TAIGA_METERS_TO_FEET (3.28083989501)
-#define TAIGA_MILES_TO_METERS (1609.34)
+#define TAIGA_METERS_TO_NAUTICAL_MILES (0.000539957)
+#define TAIGA_NAUTICAL_MILES_TO_METERS (1852)
 #define TAIGA_REFRESH (@"gov.nasa.worldwind.taiga.refresh")
 #define TAIGA_REFRESH_COMPLETE (@"gov.nasa.worldwind.taiga.refresh.complete")
 #define TAIGA_SETTING_CHANGED (@"gov.nasa.worldwind.taiga.setting.changed")

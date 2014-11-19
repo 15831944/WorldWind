@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
@@ -23,7 +24,7 @@ import java.util.logging.Level;
 
 /**
  * @author Paul Collins
- * @version $Id: PlaceNameLayer.java 2132 2014-07-09 20:03:43Z tgaskins $
+ * @version $Id: PlaceNameLayer.java 2392 2014-10-20 20:02:44Z tgaskins $
  */
 public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 {
@@ -196,6 +197,13 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         {
             if (!navSector.intersects(dc.getVisibleSector()))
                 return false;
+
+            if (dc.is2DGlobe())
+            {
+                Sector limits = ((Globe2D)dc.getGlobe()).getProjection().getProjectionLimits();
+                if (limits != null && !limits.intersectsInterior(navSector))
+                    return false;
+            }
 
             View view = dc.getView();
             Position eyePos = view.getEyePosition();

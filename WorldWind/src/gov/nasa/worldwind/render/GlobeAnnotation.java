@@ -16,7 +16,7 @@ import java.awt.*;
  * Represent a text label attached to a Position on the globe and its rendering attributes.
  *
  * @author Patrick Murris
- * @version $Id: GlobeAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: GlobeAnnotation.java 2297 2014-09-05 17:05:39Z tgaskins $
  * @see AbstractAnnotation
  * @see AnnotationAttributes
  */
@@ -394,7 +394,11 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         Position pos = this.getPosition();
         Integer altitudeMode = this.getAltitudeMode();
 
-        if (altitudeMode == null)
+        if (dc.is2DGlobe())
+        {
+            drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+        }
+        else if (altitudeMode == null)
         {
             drawPoint = getAnnotationDrawPointLegacy(dc);
         }

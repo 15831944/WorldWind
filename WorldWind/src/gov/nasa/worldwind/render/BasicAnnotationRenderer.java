@@ -22,7 +22,7 @@ import java.util.logging.Level;
  * Basic implementation of AnnotationRenderer. Process Annotation rendering as OrderedRenderable objects batch.
  *
  * @author Patrick Murris
- * @version $Id: BasicAnnotationRenderer.java 2146 2014-07-11 17:37:04Z tgaskins $
+ * @version $Id: BasicAnnotationRenderer.java 2223 2014-08-13 23:56:06Z tgaskins $
  * @see AbstractAnnotation
  * @see AnnotationAttributes
  * @see AnnotationLayer
@@ -137,7 +137,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                     continue;
             }
 
-            // TODO: cull annotations that are beyond the horizon or outside the view frustrum
+            // TODO: cull annotations that are beyond the horizon
             double eyeDistance = 1;
             if (annotation instanceof Locatable)
             {
@@ -148,6 +148,14 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                     continue;
                 eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
             }
+
+            if (annotation instanceof ScreenAnnotation)
+            {
+                Rectangle screenBounds = annotation.getBounds(dc);
+                if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
+                    return;
+            }
+
             // The annotations aren't drawn here, but added to the ordered queue to be drawn back-to-front.
             dc.addOrderedRenderable(new OrderedAnnotation(annotation, layer, eyeDistance));
 
@@ -236,6 +244,14 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                     return;
             }
         }
+
+        if (annotation instanceof ScreenAnnotation)
+        {
+            Rectangle screenBounds = annotation.getBounds(dc);
+            if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
+                return;
+        }
+
         // The annotation isn't drawn here, but added to the ordered queue to be drawn back-to-front.
         dc.addOrderedRenderable(new OrderedAnnotation(annotation, layer, eyeDistance));
 

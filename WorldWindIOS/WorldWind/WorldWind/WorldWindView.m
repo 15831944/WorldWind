@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WorldWindView.m 1922 2014-04-10 23:15:32Z dcollins $
+ @version $Id: WorldWindView.m 2351 2014-09-30 02:26:24Z tgaskins $
  */
 
 #import "WorldWind/WorldWindView.h"
@@ -17,6 +17,7 @@
 #import "WorldWind/WorldWindConstants.h"
 #import "WorldWind/WorldWindViewDelegate.h"
 #import "WorldWind/WWLog.h"
+#import "OpenGLES/ES2/glext.h"
 
 #define REDRAW_FRAME_INTERVAL (3)
 

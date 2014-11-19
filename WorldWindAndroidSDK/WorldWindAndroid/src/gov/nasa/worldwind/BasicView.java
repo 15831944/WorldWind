@@ -33,7 +33,7 @@ public class BasicView extends WWObjectImpl implements View
     protected Frustum frustum = new Frustum();
     protected Frustum frustumInModelCoords = new Frustum();
     /** The field of view in degrees. */
-    protected Angle fieldOfView = Angle.fromDegrees(45);
+    protected Angle fieldOfView = Angle.fromDegrees(60);
     protected double nearClipDistance = MINIMUM_NEAR_DISTANCE;
     protected double farClipDistance = MINIMUM_FAR_DISTANCE;
 

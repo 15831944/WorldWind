@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
@@ -23,7 +24,7 @@ import java.util.Iterator;
  * ClutterFilter} for more information on decluttering.
  *
  * @author tag
- * @version $Id: DeclutteringTextRenderer.java 2146 2014-07-11 17:37:04Z tgaskins $
+ * @version $Id: DeclutteringTextRenderer.java 2392 2014-10-20 20:02:44Z tgaskins $
  */
 public class DeclutteringTextRenderer
 {
@@ -98,6 +99,13 @@ public class DeclutteringTextRenderer
 
             if (!text.isVisible())
                 continue;
+
+            if (dc.is2DGlobe())
+            {
+                Sector limits = ((Globe2D)dc.getGlobe()).getProjection().getProjectionLimits();
+                if (limits != null && !limits.contains(text.getPosition()))
+                    continue;
+            }
 
             Angle lat = text.getPosition().getLatitude();
             Angle lon = text.getPosition().getLongitude();

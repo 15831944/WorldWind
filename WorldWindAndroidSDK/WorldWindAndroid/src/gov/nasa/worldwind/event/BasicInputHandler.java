@@ -293,8 +293,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
 
         if (latText != null && lonText != null)
         {
-            latText.setText(String.format( "%.6f", position.latitude.degrees));
-            lonText.setText(String.format( "%.6f", position.longitude.degrees));
+            latText.setText(latitudeText);
+            lonText.setText(longitudeText);
         }
     }
 

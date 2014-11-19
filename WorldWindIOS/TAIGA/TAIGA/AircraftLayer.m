@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: AircraftLayer.m 2167 2014-07-22 22:27:58Z dcollins $
+ @version $Id: AircraftLayer.m 2359 2014-10-01 20:05:57Z tgaskins $
  */
 
 #import "AircraftLayer.h"
@@ -39,7 +39,8 @@
 - (id) createAircraftShape
 {
     WWShapeAttributes* shapeAttrs = [[WWShapeAttributes alloc] init];
-    [shapeAttrs setInteriorColor:[[WWColor alloc] initWithR:0.027 g:0.596 b:0.976 a:1]];
+//    [shapeAttrs setInteriorColor:[[WWColor alloc] initWithR:0.027 g:0.596 b:0.976 a:1]];
+    [shapeAttrs setInteriorColor:[[WWColor alloc] initWithR:1.0 g:0 b:0 a:1]];
     [shapeAttrs setOutlineColor:[[WWColor alloc] initWithR:1 g:1 b:1 a:1]];
     [shapeAttrs setOutlineWidth:2];
 

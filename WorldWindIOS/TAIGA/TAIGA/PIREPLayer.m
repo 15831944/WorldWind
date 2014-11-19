@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: PIREPLayer.m 1999 2014-05-14 23:55:07Z tgaskins $
+ @version $Id: PIREPLayer.m 2358 2014-10-01 20:05:32Z tgaskins $
  */
 
 #import "PIREPLayer.h"
@@ -119,7 +119,7 @@
 {
     self = [super init];
 
-    [self setDisplayName:@"PIREPS"];
+    [self setDisplayName:@"PIREPs"];
 
     _refreshInProgress = [[NSNumber alloc] initWithBool:NO];
 

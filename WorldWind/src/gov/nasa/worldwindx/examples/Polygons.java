@@ -9,18 +9,19 @@ package gov.nasa.worldwindx.examples;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicDragger;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Example of {@link Polygon} usage. Sets material, opacity and other attributes. Sets rotation and other properties.
  * Adds an image for texturing. Shows a dateline-spanning Polygon.
  *
  * @author tag
- * @version $Id: Polygons.java 2110 2014-06-30 17:44:30Z tgaskins $
+ * @version $Id: Polygons.java 2291 2014-08-30 21:38:47Z tgaskins $
  */
 public class Polygons extends ApplicationTemplate
 {
@@ -124,6 +125,12 @@ public class Polygons extends ApplicationTemplate
             pgon.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             layer.addRenderable(pgon);
 
+            List<Marker> markers = new ArrayList<Marker>(1);
+            markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
+            MarkerLayer markerLayer = new MarkerLayer();
+            markerLayer.setMarkers(markers);
+            insertBeforeCompass(getWwd(), markerLayer);
+
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
         }
@@ -131,6 +138,6 @@ public class Polygons extends ApplicationTemplate
 
     public static void main(String[] args)
     {
-        ApplicationTemplate.start("World Wind Extruded Polygons", AppFrame.class);
+        ApplicationTemplate.start("World Wind Polygons", AppFrame.class);
     }
 }

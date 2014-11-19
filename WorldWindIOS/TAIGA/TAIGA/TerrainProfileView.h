@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: TerrainProfileView.h 1782 2013-12-20 22:57:51Z tgaskins $
+ @version $Id: TerrainProfileView.h 2267 2014-08-24 21:46:16Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -16,7 +16,6 @@
 @property (nonatomic) BOOL enabled;
 @property (nonatomic, readonly) float warningAltitude;
 @property (nonatomic, readonly) float dangerAltitude;
-@property (nonatomic) float maxAltitude;
 @property (nonatomic) float aircraftAltitude;
 @property (nonatomic) NSArray* path;
 @property (nonatomic) NSString* leftLabel;

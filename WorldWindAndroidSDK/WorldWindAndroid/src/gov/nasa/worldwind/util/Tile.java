@@ -388,12 +388,14 @@ public class Tile implements Cacheable
         // Get the eye distance squared for each of the sector's corners and its center. We use the distance squared
         // because we're only concerned about magnitude here, and using distance squared enables us to reduce the number
         // of sqrt calls from 5 to 1.
-        View view = dc.getView();
-        double d1 = view.getEyePoint().distanceToSquared3(points[0]);
-        double d2 = view.getEyePoint().distanceToSquared3(points[1]);
-        double d3 = view.getEyePoint().distanceToSquared3(points[2]);
-        double d4 = view.getEyePoint().distanceToSquared3(points[3]);
-        double d5 = view.getEyePoint().distanceToSquared3(points[4]);
+        View view = dc.getView();       
+        Vec4 p = view.getEyePoint();
+
+        double d1 = p.distanceToSquared3(points[0]);
+        double d2 = p.distanceToSquared3(points[1]);
+        double d3 = p.distanceToSquared3(points[2]);
+        double d4 = p.distanceToSquared3(points[3]);
+        double d5 = p.distanceToSquared3(points[4]);
 
         // Find the minimum eye distance squared. Compute cell height at the corresponding point. Cell height is
         // radius * radian texel size.

@@ -9,10 +9,12 @@ package gov.nasa.worldwind.terrain;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
+
 import org.w3c.dom.*;
 
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -180,6 +182,21 @@ public class WMSBasicElevationModel extends BasicElevationModel
             Log.i("",sb.toString());
             return new java.net.URL(sb.toString().replace(" ", "%20"));
         }
+    }
+    
+    /**
+     * Replace missing data values if possible to avoid artifacts during the render phase.
+     */
+    @Override
+    protected short[] readElevations(Object url) throws IOException
+    {
+    	short[] r = super.readElevations(url);
+    	if(r == null) return r;
+    	for(int i = 0; i < r.length; i++)
+    	{
+    		if(r[i] == super.missingDataFlag) r[i] = (short) super.missingDataValue;
+    	}
+    	return r;
     }
 
     //**************************************************************//

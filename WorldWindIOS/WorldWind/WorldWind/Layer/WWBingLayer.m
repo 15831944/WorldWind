@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WWBingLayer.m 1387 2013-05-31 19:03:25Z tgaskins $
+ @version $Id: WWBingLayer.m 2357 2014-10-01 20:05:10Z tgaskins $
  */
 
 #import "WorldWind/Layer/WWBingLayer.h"
@@ -22,7 +22,7 @@
                        numLevels:16
             retrievalImageFormat:@"image/png"
                        cachePath:cachePath];
-    [self setDisplayName:@"Bing"];
+    [self setDisplayName:@"Bing Maps Imagery"];
     [self setImageFile:@"Bing"];
 
     NSString* serviceLocation = @"http://worldwind27.arc.nasa.gov/wms/virtualearth";

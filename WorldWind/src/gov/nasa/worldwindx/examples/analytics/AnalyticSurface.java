@@ -50,7 +50,7 @@ import java.util.List;
  * GridPointAttributes are used.
  *
  * @author dcollins
- * @version $Id: AnalyticSurface.java 1847 2014-02-18 00:32:16Z dcollins $
+ * @version $Id: AnalyticSurface.java 2428 2014-11-13 20:04:35Z dcollins $
  */
 public class AnalyticSurface implements Renderable, PreRenderable
 {
@@ -136,14 +136,14 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
         if (width <= 0)
         {
-            String message = Logging.getMessage("Geom.WidthInvalid", width);
+            String message = Logging.getMessage("generic.InvalidWidth", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         if (height <= 0)
         {
-            String message = Logging.getMessage("Geom.HeightInvalid", width);
+            String message = Logging.getMessage("generic.InvalidHeight", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }

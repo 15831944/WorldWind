@@ -240,7 +240,7 @@ public class LevelSet extends WWObjectImpl
     @Override
     public Object setValue(String key, Object value)
     {
-        // Propogate the setting to all levels
+        // Propagate the setting to all levels
         for (Level level : this.levels)
         {
             level.setValue(key, value);

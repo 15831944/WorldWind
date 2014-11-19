@@ -2,10 +2,11 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: WWTexture.m 1493 2013-07-05 22:19:29Z dcollins $
+ @version $Id: WWTexture.m 2351 2014-09-30 02:26:24Z tgaskins $
  */
 
 #import <UIKit/UIKit.h>
+#import <OpenGLES/ES2/glext.h>
 #import "WorldWind/Render/WWTexture.h"
 #import "WorldWind/Formats/PVRTC/WWPVRTCImage.h"
 #import "WorldWind/Render/WWDrawContext.h"

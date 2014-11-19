@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppDelegate.m 2162 2014-07-22 16:12:33Z tgaskins $
+ @version $Id: AppDelegate.m 2266 2014-08-24 21:44:25Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -16,6 +16,7 @@
 #import "Settings.h"
 #import "GPSController.h"
 #import "GDBMessageController.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 {
@@ -50,6 +51,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gdbMessageReceived:)
                                                  name:TAIGA_GDB_MESSAGE object:nil];
 
+    [Crashlytics startWithAPIKey:@"5cfb29d0cd7e2db68baa627ddfa10e6100679b6c"];
+
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -78,7 +81,7 @@
     NSString* s = [formatter formatDegreesLatitude:location.coordinate.latitude
                                          longitude:location.coordinate.longitude
                                     metersAltitude:location.altitude];
-    DDLogInfo(@"GPS: %@ (%d m accuracy)", s, (int) location.horizontalAccuracy);
+    DDLogInfo(@"GPS: %@, heading %f (%d m accuracy)", s, [location course], (int) location.horizontalAccuracy);
 }
 
 - (void) gdbMessageReceived:(NSNotification*)notification

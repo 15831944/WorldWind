@@ -6,6 +6,7 @@
 package gov.nasa.worldwind;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.opengl.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -38,7 +39,13 @@ public class WorldWindowGLSurfaceView extends GLSurfaceView implements GLSurface
     protected int viewportHeight;
     protected TextView latitudeText;
     protected TextView longitudeText;
-
+    protected TextView altitudeText;
+    
+    public Point getViewport()
+    {
+    	return new Point(viewportWidth, viewportHeight);
+    }
+    
     public WorldWindowGLSurfaceView(Context context)
     {
         super(context);
@@ -292,6 +299,16 @@ public class WorldWindowGLSurfaceView extends GLSurfaceView implements GLSurface
     public void setLongitudeText(TextView lonView)
     {
         this.longitudeText = lonView;
+    }
+    
+    public TextView getAltitudeText()
+    {
+        return this.altitudeText;
+    }
+
+    public void setAltitudeText(TextView altitudeText)
+    {
+        this.altitudeText = altitudeText;
     }
 
     /** {@inheritDoc} */

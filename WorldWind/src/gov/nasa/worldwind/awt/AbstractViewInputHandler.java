@@ -17,7 +17,7 @@ import java.awt.event.*;
 
 /**
  * @author dcollins
- * @version $Id: AbstractViewInputHandler.java 2204 2014-08-07 23:35:03Z dcollins $
+ * @version $Id: AbstractViewInputHandler.java 2251 2014-08-21 21:17:46Z dcollins $
  */
 public abstract class AbstractViewInputHandler implements ViewInputHandler, java.beans.PropertyChangeListener
 {
@@ -476,6 +476,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, java
             return;
         }
         this.keyEventState.mouseReleased(e);
+        this.setMouseDownPoint(null);
         this.setSelectedPosition(null);
         this.setMouseDownView(null);
         this.handleMouseReleased(e);

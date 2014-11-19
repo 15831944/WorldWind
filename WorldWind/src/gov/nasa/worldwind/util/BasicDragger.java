@@ -14,7 +14,7 @@ import java.awt.*;
 
 /**
  * @author Patrick Murris
- * @version $Id: BasicDragger.java 2221 2014-08-12 20:03:29Z tgaskins $
+ * @version $Id: BasicDragger.java 2291 2014-08-30 21:38:47Z tgaskins $
  */
 public class BasicDragger implements SelectListener
 {
@@ -83,20 +83,20 @@ public class BasicDragger implements SelectListener
         else if (event.getEventAction().equals(SelectEvent.DRAG))
         {
             DragSelectEvent dragEvent = (DragSelectEvent) event;
-            Object topObject = dragEvent.getTopObject();
-            if (topObject == null)
+            Object dragObject = dragEvent.getTopObject();
+            if (dragObject == null)
                 return;
 
-            if (!(topObject instanceof Movable))
-                return;
-
-            Movable dragObject = (Movable) topObject;
             View view = wwd.getView();
             Globe globe = wwd.getModel().getGlobe();
 
             // Compute dragged object ref-point in model coordinates.
             // Use the Icon and Annotation logic of elevation as offset above ground when below max elevation.
-            Position refPos = dragObject.getReferencePosition();
+            Position refPos = null;
+            if (dragObject instanceof Movable2)
+                refPos = ((Movable2) dragObject).getReferencePosition();
+            else if (dragObject instanceof Movable)
+                refPos = ((Movable) dragObject).getReferencePosition();
             if (refPos == null)
                 return;
 
@@ -131,8 +131,11 @@ public class BasicDragger implements SelectListener
             {
                 // Intersection with globe. Move reference point to the intersection point,
                 // but maintain current altitude.
-                Position p = new Position(pickPos, dragObject.getReferencePosition().getElevation());
-                dragObject.moveTo(p);
+                Position p = new Position(pickPos, refPos.getElevation());
+                if (dragObject instanceof Movable2)
+                    ((Movable2) dragObject).moveTo(globe, p);
+                else
+                    ((Movable) dragObject).moveTo(p);
             }
             this.dragging = true;
             event.consume();

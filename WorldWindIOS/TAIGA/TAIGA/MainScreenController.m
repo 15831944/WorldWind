@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: MainScreenController.m 2159 2014-07-21 19:54:43Z tgaskins $
+ @version $Id: MainScreenController.m 2233 2014-08-16 17:33:00Z tgaskins $
  */
 
 #import "MainScreenController.h"
@@ -82,6 +82,11 @@
     [[TAIGA appUpdateController] checkForUpdate:YES];
 
     [self setupInstalledDataTimer];
+}
+
+- (void) didReceiveMemoryWarning
+{
+    DDLogWarn(@"RECEIVED MEMORY WARNING");
 }
 
 - (UIStatusBarStyle) preferredStatusBarStyle

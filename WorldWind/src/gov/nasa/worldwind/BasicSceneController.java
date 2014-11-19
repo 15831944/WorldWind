@@ -7,12 +7,12 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 
 /**
  * @author Tom Gaskins
- * @version $Id: BasicSceneController.java 2119 2014-07-03 03:00:27Z tgaskins $
+ * @version $Id: BasicSceneController.java 2249 2014-08-21 20:13:30Z dcollins $
  */
 public class BasicSceneController extends AbstractSceneController
 {
@@ -49,7 +49,7 @@ public class BasicSceneController extends AbstractSceneController
 
     protected void do2DContiguousRepaint(DrawContext dc)
     {
-        ((FlatGlobe) dc.getGlobe()).setOffset(0);
+        ((Globe2D) dc.getGlobe()).setOffset(0);
 
         this.applyView(dc);
         this.createPickFrustum(dc);
@@ -86,7 +86,7 @@ public class BasicSceneController extends AbstractSceneController
     {
         this.sglC = null;
         this.visibleSectorC = null;
-        ((FlatGlobe) dc.getGlobe()).setOffset(0);
+        ((Globe2D) dc.getGlobe()).setOffset(0);
         if (dc.getGlobe().intersects(dc.getView().getFrustumInModelCoordinates()))
         {
             this.sglC = dc.getModel().getGlobe().tessellate(dc);

@@ -2,7 +2,7 @@
  Copyright (C) 2014 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: GPSController.m 2169 2014-07-23 22:24:36Z tgaskins $
+ @version $Id: GPSController.m 2265 2014-08-24 16:48:05Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -95,8 +95,11 @@
             || [[retriever retrievedData] length] == 0
             || [retriever httpStatusCode] != 200)
     {
-        // Send a notification that the GPS fix is not available.
-        [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:nil];
+        if (timer != nil) // will be nil if dispose (above) has been called
+        {
+            // Send a notification that the GPS fix is not available.
+            [[NSNotificationCenter defaultCenter] postNotificationName:TAIGA_GPS_QUALITY object:nil];
+        }
         return;
     }
 

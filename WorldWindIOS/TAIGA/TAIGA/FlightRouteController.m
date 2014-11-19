@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: FlightRouteController.m 1996 2014-05-14 19:00:19Z dcollins $
+ @version $Id: FlightRouteController.m 2356 2014-10-01 18:16:52Z tgaskins $
  */
 
 #import "FlightRouteController.h"
@@ -68,14 +68,6 @@
         [self insertFlightRoute:newFlightRoute atIndex:index];
         [self presentFlightRouteAtIndex:index editing:YES];
     }];
-}
-
-- (void) navigationController:(UINavigationController*)navigationController
-       willShowViewController:(UIViewController*)viewController
-                     animated:(BOOL)animated
-{
-    // This keeps all the nested popover controllers the same size as this top-level controller.
-    viewController.preferredContentSize = navigationController.topViewController.view.frame.size;
 }
 
 - (void) handleFlightRouteNotification:(NSNotification*)notification

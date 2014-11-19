@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: UnitsFormatter.h 1918 2014-04-10 16:41:55Z dcollins $
+ @version $Id: UnitsFormatter.h 2368 2014-10-03 16:44:13Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -10,9 +10,14 @@
 @interface UnitsFormatter : NSObject
 {
 @protected
+    NSNumberFormatter* numberFormatter;
     NSNumberFormatter* latitudeFormatter;
     NSNumberFormatter* longitudeFormatter;
     NSNumberFormatter* altitudeFormatter;
+    NSNumberFormatter* angleFormatter;
+    NSNumberFormatter* speedFormatter;
+    NSNumberFormatter* distanceFormatterFeet;
+    NSNumberFormatter* distanceFormatterMiles;
 }
 
 - (NSString*) formatDegreesLatitude:(double)latitude;
@@ -23,8 +28,16 @@
 
 - (NSString*) formatDegreesLatitude:(double)latitude longitude:(double)longitude metersAltitude:(double)altitude;
 
-- (NSString*) formatMetersAltitude:(double)altitude;
+- (NSString*) formatMetersAltitude:(double)meters;
 
-- (NSString*) formatFeetAltitude:(double)altitude;
+- (NSString*) formatFeetAltitude:(double)meters;
+
+- (NSString*) formatAngle:(double)degrees;
+
+- (NSString*) formatKnotsSpeed:(double)metersPerSecond;
+
+- (NSString*) formatFeetDistance:(double)meters;
+
+- (NSString*) formatMilesDistance:(double)meters;
 
 @end

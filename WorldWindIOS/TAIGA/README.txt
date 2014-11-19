@@ -1,4 +1,4 @@
-TAIGA README file, $Id: README.txt 2051 2014-06-09 19:25:01Z tgaskins $
+TAIGA README file, $Id: README.txt 2263 2014-08-23 20:00:20Z tgaskins $
 
 Acquiring and Installing the TAIGA Data
 ---------------------------------------
@@ -42,6 +42,3 @@ located such that URLs of the following form are accurate:
 
 -- Modify the TAIGA_DATA_HOST constant in the source file TAIGA/AppConstants.h to reflect the value you entered as
 your-host-name-and-data-location in the example URL above. Then rebuild the TAIGA app.
-
-3) To install the FAA sectional charts, follow the following instructions after performing step 1.
--- TBD

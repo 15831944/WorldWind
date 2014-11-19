@@ -7,7 +7,7 @@ package gov.nasa.worldwind.avlist;
 
 /**
  * @author Tom Gaskins
- * @version $Id: AVKey.java 2203 2014-08-07 23:19:33Z dcollins $
+ * @version $Id: AVKey.java 2375 2014-10-10 23:35:05Z tgaskins $
  */
 public interface AVKey // TODO: Eliminate unused constants, if any
 {
@@ -185,6 +185,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String INT32 = "gov.nasa.worldwind.avkey.Int32";
     final String INT64 = "gov.nasa.worldwind.avkey.Int64";
 
+    final String LABEL = "gov.nasa.worldwind.avkey.Label";
     final String LAST_UPDATE = "gov.nasa.worldwind.avkey.LastUpdateKey";
     final String LAYER = "gov.nasa.worldwind.avkey.LayerObject";
     final String LAYER_ABSTRACT = "gov.nasa.worldwind.avkey.LayerAbstract";
@@ -279,6 +280,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String PICKED_OBJECT_PARENT_LAYER = "gov.nasa.worldwind.avkey.PickedObject.ParentLayer";
     final String PICKED_OBJECT_PARENT_LAYER_NAME = "gov.nasa.worldwind.avkey.PickedObject.ParentLayer.Name";
     final String PICKED_OBJECT_SIZE = "gov.nasa.worldwind.avkey.PickedObject.Size";
+    final String PICK_ENABLED = "gov.nasa.worldwind.avkey.PickEnabled";
     final String PIXELS = "gov.nasa.worldwind.avkey.Pixels";
     /**
      * Indicates whether a raster's pixel values represent imagery or elevation data. When used as a key, the
@@ -402,6 +404,8 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String SHAPE_RECTANGLE = "gov.nasa.worldwind.avkey.ShapeRectangle";
     final String SHAPE_SQUARE = "gov.nasa.worldwind.avkey.ShapeSquare";
     final String SHAPE_TRIANGLE = "gov.nasa.worldwind.avkey.ShapeTriangle";
+    final String SHAPEFILE_GEOMETRY_CACHE_SIZE = "gov.nasa.worldwind.avkey.ShapefileGeometryCacheSize";
+    final String SHAPEFILE_LAYER_FACTORY = "gov.nasa.worldwind.avkey.ShapefileLayerFactory";
     final String SHORT_DESCRIPTION = "gov.nasa.worldwind.avkey.Server.ShortDescription";
     final String SIZE_FIT_TEXT = "gov.nasa.worldwind.avkey.SizeFitText";
     final String SIZE_FIXED = "gov.nasa.worldwind.avkey.SizeFixed";

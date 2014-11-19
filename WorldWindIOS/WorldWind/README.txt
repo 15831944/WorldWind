@@ -2,12 +2,12 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: README.txt 1503 2013-07-11 21:46:08Z dcollins $
+ @version $Id: README.txt 2354 2014-09-30 18:08:09Z tgaskins $
  */
 
 INTRODUCTION
 
-This is the source code for World Wind iOS. The code runs on both iPhone and iPad devices running iOS 6 or greater. To
+This is the source code for World Wind iOS. The code runs on both iPhone and iPad devices running iOS 7 or greater. To
 use, open the WorldWindIOS.xcworkspace file with either XCode or AppCode (http://www.jetbrains.com/objc/). Build and run
 the WorldWindExamples application. Be sure to build in release mode to ensure best performance.
 

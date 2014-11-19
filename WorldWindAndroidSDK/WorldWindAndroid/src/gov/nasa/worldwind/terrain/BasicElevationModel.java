@@ -1689,7 +1689,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public ByteBuffer generateExtremeElevations(int levelNumber)
     {
         return null;
@@ -1716,7 +1715,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
      * gov.nasa.worldwind.avlist.AVList)}.
      *
      * @param domElement the XML document root to parse for BasicElevationModel configuration parameters.
-     * @param params     the output key-value pairs which recieve the BasicElevationModel configuration parameters. A
+     * @param params     the output key-value pairs which receive the BasicElevationModel configuration parameters. A
      *                   null reference is permitted.
      *
      * @return a reference to params, or a new AVList if params is null.
@@ -1775,8 +1774,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
 
         // Elevation data properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.ELEVATION_EXTREMES_FILE, "ExtremeElevations/FileName",
-            xpath);
+        WWXML.checkAndSetStringParam(domElement, params, AVKey.ELEVATION_EXTREMES_FILE, "ExtremeElevations/FileName", xpath);
         WWXML.checkAndSetDoubleParam(domElement, params, AVKey.ELEVATION_MAX, "ExtremeElevations/@max", xpath);
         WWXML.checkAndSetDoubleParam(domElement, params, AVKey.ELEVATION_MIN, "ExtremeElevations/@min", xpath);
 

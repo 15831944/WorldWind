@@ -11,6 +11,8 @@ import gov.nasa.worldwind.avlist.AVList;
 import java.net.URL;
 import java.util.List;
 
+import android.content.Context;
+
 /**
  * Provides tracking of per-host network availability. Host computers that fail network requests can be logged to the
  * implementing object's tracking list. When a host has been logged a specified number of times, it is marked as
@@ -152,4 +154,6 @@ public interface NetworkStatus extends AVList
      *                         are consulted.
      */
     void setNetworkTestSites(List<String> networkTestSites);
+
+    void testNetworkConnection(Context ctx);
 }

@@ -13,7 +13,7 @@
         <DataCacheName>Earth/EarthElevationModel.bil16</DataCacheName>
         <ImageFormat>application/bil16</ImageFormat>
         <DataType type="Int16" byteOrder="LittleEndian"/>
-        <DataDetailHint>0.20</DataDetailHint>
+        <DataDetailHint>0.10</DataDetailHint>
         <FormatSuffix>.bil</FormatSuffix>
         <ExtremeElevations min="-11000" max="8850">
             <FileName>config/SRTM30Plus_ExtremeElevations_5.bil</FileName>

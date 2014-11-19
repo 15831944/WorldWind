@@ -6,6 +6,7 @@ package gov.nasa.worldwind.terrain;
 
 import android.graphics.Point;
 import android.opengl.GLES20;
+import android.util.Log;
 import android.util.Pair;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
@@ -343,7 +344,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         }
     }
 
-    protected static final double DEFAULT_DETAIL_HINT_ORIGIN = 1.3;
+
     protected static Map<Object, TerrainSharedGeometry> sharedGeometry = new HashMap<Object, TerrainSharedGeometry>();
     protected static Map<Object, TerrainPickGeometry> pickGeometry = new HashMap<Object, TerrainPickGeometry>();
     protected static final String PICK_VERTEX_SHADER_PATH = "shaders/TiledTessellatorPick.vert";
@@ -482,6 +483,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
         this.assembleExpiredSectors();
         this.assembleTiles(dc);
+        
         this.currentExpiredSectors.clear();
 
         return this.currentTiles;
@@ -527,22 +529,36 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         // avoid reallocating a sector every frame.
         this.currentTiles.clear();
         this.currentCoverage.setDegrees(0, 0, 0, 0);
-
+        level = 0;
+        
         if (this.topLevelTiles.isEmpty())
-            this.createTopLevelTiles();
-
+        {
+        	this.createTopLevelTiles();
+        }
+        
         for (int i = 0; i < this.topLevelTiles.size(); i++)
         {
-            Tile tile = this.topLevelTiles.get(i);
-
-            this.updateTileExtent(dc, (TerrainTile) tile);
-
-            if (this.intersectsFrustum(dc, (TerrainTile) tile))
-                this.addTileOrDescendants(dc, (TerrainTile) tile);
+        	Tile tile = this.topLevelTiles.get(i);
+        	this.updateTileExtent(dc, (TerrainTile) tile);
+        	if (this.intersectsFrustum(dc, (TerrainTile) tile))
+        		this.addTileOrDescendants(dc, (TerrainTile) tile);
         }
 
-        this.currentTiles.setSector(this.currentCoverage.isEmpty() ? null : this.currentCoverage);
+        String t = "" + currentTiles.size() + " max level: " + level + " " + resolution ;
+        if(!s.equals(t))
+        {
+        	s = t;
+//        	Log.e("Tesselator", t);
+        }
+        
+       	this.currentTiles.setSector(this.currentCoverage.isEmpty() ? null : this.currentCoverage);
     }
+  
+    String s = "";
+    int level = 0;
+    double resolution = 0;
+    
+     protected static final double DEFAULT_DETAIL_HINT_ORIGIN = 1.3;
 
     protected void createTopLevelTiles()
     {
@@ -555,7 +571,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         this.topLevelTiles.clear();
         Tile.createTilesForLevel(this.levels.getFirstLevel(), this.levels.getSector(), this, this.topLevelTiles);
     }
-
+    
     protected void addTileOrDescendants(DrawContext dc, TerrainTile tile)
     {
         this.updateTileExtent(dc, tile);
@@ -567,7 +583,6 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         }
 
         MemoryCache cache = this.getTerrainTileCache();
-
         Tile[] subTiles = tile.subdivide(this.levels.getLevel(tile.getLevelNumber() + 1), cache, this);
         for (Tile child : subTiles)
         {
@@ -580,8 +595,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
             // Add descendant tiles that intersect the LevelSet's sector and intersect the viewing frustum. If half or
             // more of the tile (in either latitude or longitude) extends beyond the LevelSet's sector, then two or
             // three of its children will be entirely outside the LevelSet's sector.
-            if (this.levels.getSector().intersects(child.getSector()) && this.intersectsFrustum(dc,
-                (TerrainTile) child))
+            if (this.levels.getSector().intersects(child.getSector()) && this.intersectsFrustum(dc, (TerrainTile) child))
             {
                 this.addTileOrDescendants(dc, (TerrainTile) child);
             }
@@ -589,12 +603,12 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         tile.clearChildList();
     }
 
-    @SuppressWarnings({"UnusedParameters"})
     protected void addTile(DrawContext dc, TerrainTile tile)
     {
         if (this.mustRegenerateGeometry(dc, tile))
             this.regenerateGeometry(dc, tile);
 
+        level = Math.max(level, tile.getLevelNumber());
         this.currentTiles.add(tile);
 
         // If the current coverage sector is empty, just set the coverage to the tile's sector. This ensures that we
@@ -626,7 +640,8 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
     protected boolean needToSubdivide(DrawContext dc, TerrainTile tile)
     {
-        return tile.mustSubdivide(dc, this.getDetailFactor());
+    	resolution = Math.max(resolution, dc.getGlobe().getElevationModel().getDetailHint(tile.getSector()));
+        return tile.mustSubdivide(dc, this.getDetailFactor() + dc.getGlobe().getElevationModel().getDetailHint(tile.getSector()));
     }
 
     protected double getDetailFactor()
@@ -682,7 +697,6 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         }
     }
 
-    @SuppressWarnings({"UnusedParameters"})
     protected boolean isExpired(DrawContext dc, TerrainTile tile)
     {
         if (this.currentExpiredSectors.isEmpty())

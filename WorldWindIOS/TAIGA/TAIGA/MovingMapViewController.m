@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: MovingMapViewController.m 2175 2014-07-24 20:46:05Z tgaskins $
+ @version $Id: MovingMapViewController.m 2356 2014-10-01 18:16:52Z tgaskins $
  */
 
 #import "MovingMapViewController.h"
@@ -225,7 +225,7 @@
     viewSelectionController = [[ViewSelectionController alloc] init];
 
     float x = 20;//myFrame.size.width - 220;
-    float y = myFrame.size.height - 70;
+    float y = myFrame.size.height - 150;
     scaleBarView = [[ScaleBarView alloc] initWithFrame:CGRectMake(x, y, 200, 50) worldWindView:_wwv];
     scaleBarView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:scaleBarView];
@@ -760,7 +760,6 @@
     {
         UINavigationController* navController = [[UINavigationController alloc]
                 initWithRootViewController:layerListController];
-        [navController setDelegate:layerListController];
         layerListPopoverController = [[UIPopoverController alloc] initWithContentViewController:navController];
     }
 
@@ -782,7 +781,6 @@
     {
         UINavigationController* navController = [[UINavigationController alloc]
                 initWithRootViewController:viewSelectionController];
-        [navController setDelegate:viewSelectionController];
         viewSelectionPopoverController = [[UIPopoverController alloc] initWithContentViewController:navController];
     }
 

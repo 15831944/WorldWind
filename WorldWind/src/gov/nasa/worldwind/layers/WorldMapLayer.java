@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * Note: This layer may not be shared among multiple {@link WorldWindow}s.
  *
  * @author Patrick Murris
- * @version $Id: WorldMapLayer.java 2124 2014-07-03 03:46:56Z tgaskins $
+ * @version $Id: WorldMapLayer.java 2230 2014-08-14 18:19:48Z tgaskins $
  */
 public class WorldMapLayer extends AbstractLayer
 {
@@ -447,7 +447,7 @@ public class WorldMapLayer extends AbstractLayer
                 }
 
                 // Draw view footprint in map icon space
-                if (this.showFootprint)
+                if (!dc.is2DGlobe() && this.showFootprint)
                 {
                     this.footPrintPositions = this.computeViewFootPrint(dc, 32);
                     if (this.footPrintPositions != null)

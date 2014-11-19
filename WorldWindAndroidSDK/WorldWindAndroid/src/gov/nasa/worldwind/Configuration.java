@@ -55,7 +55,7 @@ public class Configuration // Singleton
 
     public static final String CONFIG_APP_DOCUMENT_KEY = "gov.nasa.worldwind.app.config.document";
     public static final String CONFIG_WW_DOCUMENT_KEY = "gov.nasa.worldwind.config.document";
-    protected static final String CONFIG_WW_DOCUMENT_DEFAULT_LOCATION = "config/worldwind.xml";
+    private static final String CONFIG_WW_DOCUMENT_DEFAULT_LOCATION = "config/worldwind.xml";
 
     protected static Configuration instance = new Configuration();
 

@@ -18,8 +18,8 @@ import java.util.*;
  * @version $Id: SurfaceTileRenderer.java 831 2012-10-08 20:51:39Z tgaskins $
  */
 public class SurfaceTileRenderer
-{
-    protected static final String VERTEX_SHADER_PATH = "shaders/SurfaceTileRenderer.vert";
+{ 
+	protected static final String VERTEX_SHADER_PATH = "shaders/SurfaceTileRenderer.vert";
     protected static final String FRAGMENT_SHADER_PATH = "shaders/SurfaceTileRenderer.frag";
 
     protected final Object programKey = new Object();

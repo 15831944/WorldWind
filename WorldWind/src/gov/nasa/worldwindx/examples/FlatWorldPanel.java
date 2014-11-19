@@ -7,10 +7,9 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.*;
-import gov.nasa.worldwind.view.orbit.*;
+import gov.nasa.worldwind.terrain.ZeroElevationModel;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -23,7 +22,7 @@ import java.awt.event.*;
  * WorldWindow to match the users globe selection.
  *
  * @author Patrick Murris
- * @version $Id: FlatWorldPanel.java 2219 2014-08-11 21:39:44Z dcollins $
+ * @version $Id: FlatWorldPanel.java 2419 2014-11-08 04:44:55Z tgaskins $
  */
 @SuppressWarnings("unchecked")
 public class FlatWorldPanel extends JPanel
@@ -41,13 +40,13 @@ public class FlatWorldPanel extends JPanel
         {
             this.flatGlobe = (FlatGlobe) wwd.getModel().getGlobe();
             this.roundGlobe = new Earth();
-            this.apply2DViewLimits();
         }
         else
         {
             this.flatGlobe = new EarthFlat();
             this.roundGlobe = wwd.getModel().getGlobe();
         }
+        this.flatGlobe.setElevationModel(new ZeroElevationModel());
         this.makePanel();
     }
 
@@ -92,7 +91,9 @@ public class FlatWorldPanel extends JPanel
             {"Lat-Lon", "Mercator", "Modified Sin.", "Sinusoidal",
                 "Transverse Mercator",
                 "North Polar",
-                "South Polar"
+                "South Polar",
+                "UPS North",
+                "UPS South"
             });
         this.projectionCombo.setEnabled(isFlatGlobe());
         this.projectionCombo.addActionListener(new ActionListener()
@@ -100,7 +101,6 @@ public class FlatWorldPanel extends JPanel
             public void actionPerformed(ActionEvent actionEvent)
             {
                 updateProjection();
-                apply2DViewLimits();
             }
         });
         comboPanel.add(this.projectionCombo);
@@ -136,6 +136,10 @@ public class FlatWorldPanel extends JPanel
             return new ProjectionPolarEquidistant(AVKey.NORTH);
         else if (item.equals("South Polar"))
             return new ProjectionPolarEquidistant(AVKey.SOUTH);
+        else if (item.equals("UPS North"))
+            return new ProjectionUPS(AVKey.NORTH);
+        else if (item.equals("UPS South"))
+            return new ProjectionUPS(AVKey.SOUTH);
         // Default to lat-lon
         return new ProjectionEquirectangular();
     }
@@ -154,33 +158,16 @@ public class FlatWorldPanel extends JPanel
         {
             // Switch to round globe
             wwd.getModel().setGlobe(roundGlobe);
-            // Stop any view movement and reset the view property limits.
             wwd.getView().stopMovement();
-            wwd.getView().getViewPropertyLimits().reset();
         }
         else
         {
             // Switch to flat globe
             wwd.getModel().setGlobe(flatGlobe);
-            this.updateProjection();
-            // Stop any view movement and limit the view's tilt and zoom properites.
             wwd.getView().stopMovement();
-            this.apply2DViewLimits();
+            this.updateProjection();
         }
 
         wwd.redraw();
-    }
-
-    protected void apply2DViewLimits()
-    {
-        OrbitView view = (OrbitView) wwd.getView();
-        double maxZoom = Math.PI * wwd.getModel().getGlobe().getEquatorialRadius()
-            / view.getFieldOfView().tanHalfAngle();
-        view.getOrbitViewLimits().setPitchLimits(Angle.ZERO, Angle.ZERO);
-        view.getOrbitViewLimits().setRollLimits(Angle.ZERO, Angle.ZERO);
-        view.getOrbitViewLimits().setZoomLimits(0, maxZoom);
-        view.setDetectCollisions(false);
-        BasicOrbitViewLimits.applyLimits(view, view.getOrbitViewLimits());
-        view.setDetectCollisions(true);
     }
 }

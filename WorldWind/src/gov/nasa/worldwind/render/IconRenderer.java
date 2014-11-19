@@ -36,7 +36,7 @@ import java.util.logging.Level;
  * bounding rectangle in screen coordinates.</td></tr> </table>
  *
  * @author tag
- * @version $Id: IconRenderer.java 2146 2014-07-11 17:37:04Z tgaskins $
+ * @version $Id: IconRenderer.java 2260 2014-08-23 00:14:06Z tgaskins $
  */
 public class IconRenderer
 {
@@ -271,7 +271,11 @@ public class IconRenderer
             // otherwise draw it from the globe.
             Position pos = icon.getPosition();
             Vec4 iconPoint = null;
-            if (pos.getElevation() < dc.getGlobe().getMaxElevation() && !this.isAlwaysUseAbsoluteElevation())
+            if (dc.is2DGlobe())
+            {
+                iconPoint = dc.getGlobe().computePointFromLocation(pos);
+            }
+            else if (pos.getElevation() < dc.getGlobe().getMaxElevation() && !this.isAlwaysUseAbsoluteElevation())
             {
                 iconPoint = dc.getSurfaceGeometry().getSurfacePoint(icon.getPosition());
             }

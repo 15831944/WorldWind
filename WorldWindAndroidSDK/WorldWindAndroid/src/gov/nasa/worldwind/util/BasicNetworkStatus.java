@@ -15,6 +15,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+
 /**
  * @author pabercrombie
  * @version $Id: BasicNetworkStatus.java 733 2012-09-02 17:15:09Z dcollins $
@@ -298,10 +303,10 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
         {
             if (isHostReachable(testHost))
             {
-                {
-                    this.lastNetworkUnavailableResult.set(false); // network not unreachable
-                    return this.lastNetworkUnavailableResult.get();
-                }
+            	{
+            		this.lastNetworkUnavailableResult.set(false); // network not unreachable
+            		return this.lastNetworkUnavailableResult.get();
+            	}
             }
         }
 
@@ -383,4 +388,30 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
 
         return false;
     }
+
+	@Override
+	public void testNetworkConnection(Context ctx)
+	{
+		ConnectivityManager connectivity = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (connectivity != null)
+		{
+			NetworkInfo[] info = connectivity.getAllNetworkInfo();
+			if (info != null)
+			{
+				for (int i = 0; i < info.length; i++)
+				{
+					if (info[i].getState() == NetworkInfo.State.CONNECTED)
+					{
+						this.lastNetworkUnavailableResult.set(false);
+					    this.lastAvailableLogTime.set(System.currentTimeMillis());
+					    this.lastNetworkCheckTime.set(System.currentTimeMillis());
+						return;
+					}
+				}
+			}
+		}
+		this.lastNetworkUnavailableResult.set(true);
+		this.lastUnavailableLogTime.set(System.currentTimeMillis());
+		this.lastNetworkCheckTime.set(System.currentTimeMillis());
+	}
 }

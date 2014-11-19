@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: LayerListController.m 2167 2014-07-22 22:27:58Z dcollins $
+ @version $Id: LayerListController.m 2360 2014-10-01 20:06:34Z tgaskins $
  */
 
 #import "LayerListController.h"
@@ -36,7 +36,7 @@
     _wwv = wwv;
 
     [[self navigationItem] setTitle:@"Overlays"];
-    [self setPreferredContentSize:CGSizeMake(320, 450)];
+    [self setPreferredContentSize:CGSizeMake(320, 500)];
 
     // Set up to handle layer list changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -62,12 +62,6 @@
 - (void) flashScrollIndicator
 {
     [[self tableView] performSelector:@selector(flashScrollIndicators) withObject:nil afterDelay:0];
-}
-
-- (void) navigationController:(UINavigationController*)navigationController willShowViewController:(UIViewController*)viewController animated:(BOOL)animated
-{
-    // This keeps all the nested popover controllers the same size as this top-level controller.
-    viewController.preferredContentSize = navigationController.topViewController.view.frame.size;
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView*)tableView

@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: AppConstants.h 2369 2014-10-03 16:44:26Z tgaskins $
+ @version $Id: AppConstants.h 2682 2015-01-26 16:33:24Z tgaskins $
  */
 
 #import <Foundation/Foundation.h>
@@ -10,8 +10,8 @@
 
 static const int ddLogLevel = LOG_LEVEL_INFO;
 
-#define TAIGA_VERSION (@"1.002")
-#define TAIGA_VERSION_DATE (@"10/3/14")
+#define TAIGA_VERSION (@"1.005")
+#define TAIGA_VERSION_DATE (@"1/6/15")
 
 #define TAIGA_DATA_HOST @"worldwindserver.net"
 

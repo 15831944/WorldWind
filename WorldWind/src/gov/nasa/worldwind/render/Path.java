@@ -79,7 +79,7 @@ import static gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil.kmlBoolean;
  * position picked.
  *
  * @author tag
- * @version $Id: Path.java 2331 2014-09-19 19:45:55Z tgaskins $
+ * @version $Id: Path.java 2630 2014-12-31 23:28:53Z tgaskins $
  */
 public class Path extends AbstractShape
 {
@@ -356,6 +356,15 @@ public class Path extends AbstractShape
         {
             this.vertexCount = count;
         }
+    }
+
+    @Override
+    protected SurfaceShape createSurfaceShape()
+    {
+        SurfacePolyline polyline = new SurfacePolyline();
+        polyline.setLocations(this.getPositions());
+
+        return polyline;
     }
 
     /**

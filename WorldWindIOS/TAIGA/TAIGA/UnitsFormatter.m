@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: UnitsFormatter.m 2368 2014-10-03 16:44:13Z tgaskins $
+ @version $Id: UnitsFormatter.m 2629 2014-12-31 18:57:55Z tgaskins $
  */
 
 #import "UnitsFormatter.h"
@@ -46,8 +46,8 @@
     speedFormatter = [[NSNumberFormatter alloc] init];
     [speedFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [speedFormatter setMaximumFractionDigits:0];
-    [speedFormatter setPositiveSuffix:@" KTS"];
-    [speedFormatter setNegativeSuffix:@" KTS"];
+    [speedFormatter setPositiveSuffix:@" kts"];
+    [speedFormatter setNegativeSuffix:@" kts"];
 
     distanceFormatterFeet = [[NSNumberFormatter alloc] init];
     [distanceFormatterFeet setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -67,6 +67,11 @@
 - (NSString*) formatAngle:(double)angle
 {
     return [angleFormatter stringFromNumber:[NSNumber numberWithDouble:angle]];
+}
+
+- (NSString*) formatAngle2:(double)angle
+{
+    return [NSString stringWithFormat:@"%03d\u00B0", (int) round(angle)];
 }
 
 - (NSString*) formatDegreesLatitude:(double)latitude

@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: AddWaypointPopoverController.m 1995 2014-05-14 18:22:40Z dcollins $
+ @version $Id: AddWaypointPopoverController.m 2629 2014-12-31 18:57:55Z tgaskins $
  */
 
 #import "AddWaypointPopoverController.h"
@@ -35,7 +35,7 @@ static NSString* AddWaypointActionAdd = @"Add to Route";
     addWaypointController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     [addWaypointController setPreferredContentSize:size];
     [[addWaypointController navigationItem] setTitle:@"Waypoint"];
-    [[addWaypointController navigationItem] setRightBarButtonItem:rightButtonItem];
+//    [[addWaypointController navigationItem] setRightBarButtonItem:rightButtonItem];
     [[addWaypointController tableView] setDataSource:self];
     [[addWaypointController tableView] setDelegate:self];
     [[addWaypointController tableView] setBounces:NO];

@@ -18,7 +18,7 @@ import java.util.*;
  * class's width parameter.
  *
  * @author garakl
- * @version $Id: Route.java 2424 2014-11-10 17:38:39Z tgaskins $
+ * @version $Id: Route.java 2563 2014-12-12 19:29:38Z dcollins $
  */
 public class Route extends TrackAirspace
 {
@@ -92,7 +92,7 @@ public class Route extends TrackAirspace
         }
 
         this.invalidateAirspaceData();
-        this.setLegsOutOfDate();
+        this.setLegsOutOfDate(true);
     }
 
     public double getWidth()
@@ -118,7 +118,7 @@ public class Route extends TrackAirspace
         }
 
         this.invalidateAirspaceData();
-        this.setLegsOutOfDate();
+        this.setLegsOutOfDate(true);
     }
 
     public Box addLeg(LatLon start, LatLon end)

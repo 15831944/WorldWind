@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: MovingMapViewController.m 2356 2014-10-01 18:16:52Z tgaskins $
+ @version $Id: MovingMapViewController.m 2629 2014-12-31 18:57:55Z tgaskins $
  */
 
 #import "MovingMapViewController.h"
@@ -47,13 +47,13 @@
 #import "AircraftTrackLayer.h"
 #import "TerrainAltitudeLayer.h"
 #import "LocationTrackingViewController.h"
-#import "WWDAFIFLayer.h"
+//#import "WWDAFIFLayer.h"
 #import "WWBingLayer.h"
 #import "AddWaypointPopoverController.h"
 #import "EditWaypointPopoverController.h"
 #import "UIPopoverController+TAIGAAdditions.h"
 #import "FAASectionalsLayer.h"
-#import "DAFIFLayer.h"
+//#import "DAFIFLayer.h"
 #import "SUALayer.h"
 #import "SUADataViewController.h"
 #import "DataBarViewController.h"
@@ -108,7 +108,7 @@
     PIREPLayer* pirepLayer;
     WeatherCamLayer* weatherCamLayer;
     CompassLayer* compassLayer;
-    WWDAFIFLayer* dafifLayer;
+//    WWDAFIFLayer* dafifLayer;
     SUALayer* suaLayer;
 
     UITapGestureRecognizer* tapGestureRecognizer;
@@ -363,11 +363,11 @@
             [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@",
                                              [faaChartsLayer displayName]] defaultValue:NO]];
     [[[_wwv sceneController] layers] addLayer:faaChartsLayer];
-
-    dafifLayer = [[DAFIFLayer alloc] init];
-    [dafifLayer setEnabled:[Settings                                                                               getBoolForName:
-            [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@", [dafifLayer displayName]] defaultValue:YES]];
-    [[[_wwv sceneController] layers] addLayer:dafifLayer];
+//
+//    dafifLayer = [[DAFIFLayer alloc] init];
+//    [dafifLayer setEnabled:[Settings                                                                               getBoolForName:
+//            [[NSString alloc] initWithFormat:@"gov.nasa.worldwind.taiga.layer.enabled.%@", [dafifLayer displayName]] defaultValue:YES]];
+//    [[[_wwv sceneController] layers] addLayer:dafifLayer];
 
     suaLayer = [[SUALayer alloc] init];
     [suaLayer setEnabled:[Settings                                                                               getBoolForName:
@@ -885,7 +885,7 @@
             {
                 if ([[[topObject parentLayer] displayName] isEqualToString:@"METAR Weather"])
                     [self showMETARData:pm];
-                else if ([[[topObject parentLayer] displayName] isEqualToString:@"PIREPS"])
+                else if ([[[topObject parentLayer] displayName] isEqualToString:@"PIREPs"])
                     [self showPIREPData:pm];
                 else if ([[[topObject parentLayer] displayName] isEqualToString:@"Weather Cams"])
                     [self showWeatherCam:pm];

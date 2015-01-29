@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * @author tag
- * @version $Id: BasicTiledImageLayer.java 1931 2014-04-14 21:31:43Z tgaskins $
+ * @version $Id: BasicTiledImageLayer.java 2684 2015-01-26 18:31:22Z tgaskins $
  */
 public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetrievable
 {
@@ -116,6 +116,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         if (params.getValue(AVKey.TRANSPARENCY_COLORS) != null)
             this.setValue(AVKey.TRANSPARENCY_COLORS, params.getValue(AVKey.TRANSPARENCY_COLORS));
+
+        b = (Boolean) params.getValue(AVKey.DELETE_CACHE_ON_EXIT);
+        if (b != null)
+            this.setValue(AVKey.DELETE_CACHE_ON_EXIT, true);
 
         this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
 

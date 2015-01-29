@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
 
- @version $Id: EditWaypointPopoverController.m 1996 2014-05-14 19:00:19Z dcollins $
+ @version $Id: EditWaypointPopoverController.m 2629 2014-12-31 18:57:55Z tgaskins $
  */
 
 #import "EditWaypointPopoverController.h"
@@ -38,7 +38,7 @@ static NSString* EditWaypointActionRemove = @"Remove Waypoint";
     tableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     [tableViewController setPreferredContentSize:CGSizeMake(240, 44 * [tableCells count])];
     [[tableViewController navigationItem] setTitle:@"Waypoint"];
-    [[tableViewController navigationItem] setRightBarButtonItem:rightButtonItem];
+//    [[tableViewController navigationItem] setRightBarButtonItem:rightButtonItem];
     [[tableViewController tableView] setDataSource:self];
     [[tableViewController tableView] setDelegate:self];
     [[tableViewController tableView] setBounces:NO];

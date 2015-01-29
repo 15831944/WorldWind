@@ -48,7 +48,7 @@ import java.util.*;
 
 /**
  * @author Tom Gaskins
- * @version $Id: BasicElevationModel.java 2350 2014-09-29 17:17:48Z tgaskins $
+ * @version $Id: BasicElevationModel.java 2684 2015-01-26 18:31:22Z tgaskins $
  */
 public class BasicElevationModel extends AbstractElevationModel implements BulkRetrievable
 {
@@ -118,6 +118,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         s = params.getStringValue(AVKey.ELEVATION_EXTREMES_FILE);
         if (s != null)
             this.loadExtremeElevations(s);
+
+        b = (Boolean) params.getValue(AVKey.DELETE_CACHE_ON_EXIT);
+        if (b != null)
+            this.setValue(AVKey.DELETE_CACHE_ON_EXIT, true);
 
         // Set some fallback values if not already set.
         setFallbacks(params);

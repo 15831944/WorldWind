@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 /**
  * @author tag
- * @version $Id: AbstractSceneController.java 2248 2014-08-21 20:11:34Z dcollins $
+ * @version $Id: AbstractSceneController.java 2442 2014-11-19 22:50:42Z tgaskins $
  */
 public abstract class AbstractSceneController extends WWObjectImpl implements SceneController
 {
@@ -462,6 +462,12 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 //        dc.setGroupingFilters(this.groupingFilters);
 
         long frameTimeStamp = System.currentTimeMillis();
+        // Ensure that the frame time stamps differ between frames. This is necessary on machines with low-resolution
+        // JVM clocks or that are so fast that they render under 1 millisecond.
+        if (frameTimeStamp == dc.getFrameTimeStamp())
+        {
+            ++frameTimeStamp;
+        }
         dc.setFrameTimeStamp(frameTimeStamp);
         // Indicate the frame time stamp to apps.
         this.setValue(AVKey.FRAME_TIMESTAMP, frameTimeStamp);

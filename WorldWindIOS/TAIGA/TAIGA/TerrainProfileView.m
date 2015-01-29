@@ -2,7 +2,7 @@
  Copyright (C) 2013 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: TerrainProfileView.m 2352 2014-09-30 02:52:27Z tgaskins $
+ @version $Id: TerrainProfileView.m 2629 2014-12-31 18:57:55Z tgaskins $
  */
 
 #import "TerrainProfileView.h"
@@ -32,7 +32,7 @@
     UILabel* rightLabelView;
     UILabel* noCourseLabel;
     UILabel* aircraftAltitudeLabelView;
-    float* gradientColors;
+    CGFloat* gradientColors;
 }
 
 - (TerrainProfileView*) initWithFrame:(CGRect)frame worldWindView:(WorldWindView*)worldWindView
@@ -46,7 +46,7 @@
     ys = nil;
 
     _opacity = 0.5;
-    gradientColors = malloc((size_t) 24 * sizeof(float));
+    gradientColors = malloc((size_t) 24 * sizeof(CGFloat));
     gradientColors[0] = 0.0;
     gradientColors[1] = 1.0;
     gradientColors[2] = 0.0;

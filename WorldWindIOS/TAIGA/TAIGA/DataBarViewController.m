@@ -2,7 +2,7 @@
  Copyright (C) 2014 United States Government as represented by the Administrator of the
  National Aeronautics and Space Administration. All Rights Reserved.
  
- @version $Id: DataBarViewController.m 2368 2014-10-03 16:44:13Z tgaskins $
+ @version $Id: DataBarViewController.m 2682 2015-01-26 16:33:24Z tgaskins $
  */
 
 #import <CoreLocation/CoreLocation.h>
@@ -132,7 +132,7 @@
     fixedSpace.width = 10;
 
     [toolbar setItems:[NSArray arrayWithObjects:
-//            fixedSpace,
+            fixedSpace,
             flexibleSpace,
             gpsPositionItem,
             flexibleSpace,
@@ -170,9 +170,11 @@
 - (void) updateGPSView
 {
     // Insert non-breaking spaces between the lat/lon/alt values.
-    NSString* title = [[NSString alloc] initWithFormat:@"GPS\n%@\u00a0%@\u00a0%@",
-                                                       [formatter formatDegreesLatitude:currentLocation.coordinate.latitude],
-                                                       [formatter formatDegreesLongitude:currentLocation.coordinate.longitude],
+//    NSString* title = [[NSString alloc] initWithFormat:@"GPS\n%@\u00a0%@\u00a0%@",
+//                                                       [formatter formatDegreesLatitude:currentLocation.coordinate.latitude],
+//                                                       [formatter formatDegreesLongitude:currentLocation.coordinate.longitude],
+//                                                       [formatter formatMetersAltitude:currentLocation.altitude]];
+    NSString* title = [[NSString alloc] initWithFormat:@"Altitude\n%@",
                                                        [formatter formatMetersAltitude:currentLocation.altitude]];
     [gpsPositionButton setTitle:title forState:UIControlStateNormal];
 
@@ -187,14 +189,14 @@
     if (heading < 0)
         heading += 360;
 
-    NSString* title = [[NSString alloc] initWithFormat:@"Heading\n%@\u00a0", [formatter formatAngle:heading]];
+    NSString* title = [[NSString alloc] initWithFormat:@"Heading\n%@\u00a0", [formatter formatAngle2:heading]];
     [headingButton setTitle:title forState:UIControlStateNormal];
 }
 
 - (void) updateSpeedView
 {
     NSString* title = [[NSString alloc] initWithFormat:@"Ground Speed\n%@\u00a0",
-                                                       [formatter formatKnotsSpeed:currentLocation.speed]];
+                                                       [formatter formatKnotsSpeed:fabs(currentLocation.speed)]];
     [speedButton setTitle:title forState:UIControlStateNormal];
 }
 
